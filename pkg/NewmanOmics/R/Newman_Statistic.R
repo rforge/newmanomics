@@ -11,7 +11,6 @@ MatP = data.matrix(input2)
 nml_str = "Normal"
 tum_str = "Cancer"
 
-
 ## Preliminary functions
 
 NuVals_Bank = function(matrix,mean,sd,s){

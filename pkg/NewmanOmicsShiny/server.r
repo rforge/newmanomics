@@ -2,29 +2,39 @@ library(shiny)
 
 shinyServer(function(input,output){
     
-    output$mychoice <- renderText(input$choice)
+  output$myPlot <-renderPlot({
     
-    output$normsub <- renderText({ input$normal })
-    output$tumsub <- renderText({ input$tumor })
+    distType <- input$choice
+    #fileTwo <- input$file2
     
-    #This function is repsonsible for loading in the selected file
-    filedata <- reactive({
-      infile <- input$file1
-      if (is.null(infile)) {
-        # User has not uploaded a file yet
-        return(NULL)
+    if(distType == "Pilot"){
+      
+      fileOne <- input$file1
+      
+      pilotStat <- function(mat = data.matrix(input$file1)){
+        n = dim(mat)[1]
+        s = dim(mat)[2]
+        
+        temp.means  = unname(rowMeans(mat))
+        temp.sd = rowSds(mat)
+        
+        loess.model = loess(temp.sd ~ temp.means)
+        sdEst = predict(loess.model)
+        
+        nuValsAnova(matrix = mat, sd = sdEst)
+        
+        ## F measure = between group var/within group var
+        ## p val = area under curve (correction needed?)
       }
-      read.csv(infile$datapath)
-    })
-    
-    
-    #This previews the CSV data file
-    output$filetable <- renderTable({
-      filedata()
-    })
-    
-    source("/Users/Gershkowitz/Desktop/Shiny/IteratedBank.R")
-    mybank(filedata, normal, tumor)
-    
-    
+
+      nuValsAnova = function(matrix,sd){
+        nuVals = numeric(n)
+        for (i in 1:n){
+          nuVals[i] = (max(matrix[i, ]) - min(matrix[i, ]))/sd[i]
+        }
+        hist(nuVal, col="blue")
+      }
+    }
+  })
+  
 })

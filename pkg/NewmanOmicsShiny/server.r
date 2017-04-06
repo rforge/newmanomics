@@ -4,14 +4,10 @@ shinyServer(function(input,output){
     
   output$myPlot <-renderPlot({
     
-    distType <- input$choice
-    #fileTwo <- input$file2
-    
-    if(distType == "Pilot"){
       
       fileOne <- input$file1
       
-      pilotStat <- function(mat = data.matrix(input$file1)){
+      output$pilotStat <- function(mat = data.matrix(input$file1)){
         n = dim(mat)[1]
         s = dim(mat)[2]
         
@@ -21,20 +17,35 @@ shinyServer(function(input,output){
         loess.model = loess(temp.sd ~ temp.means)
         sdEst = predict(loess.model)
         
-        nuValsAnova(matrix = mat, sd = sdEst)
+        nuValsPilot = nuValsAnova(matrix = mat, sd = sdEst, n)
         
+        pValsPilot = nuToPValPilot(mat,n,s,temp.means,nuValsPilot)
         ## F measure = between group var/within group var
         ## p val = area under curve (correction needed?)
+        
+        #write.csv(pValsPilot,"C:/Users/anous/Documents/R/BMI Research/Output/PVals_Pilot.csv",row.names = RN)
+        
       }
-
-      nuValsAnova = function(matrix,sd){
+      
+      nuValsAnova = function(matrix,sd, n){
         nuVals = numeric(n)
         for (i in 1:n){
           nuVals[i] = (max(matrix[i, ]) - min(matrix[i, ]))/sd[i]
         }
-        hist(nuVal, col="blue")
+        return(nuVals)
       }
-    }
+      
+      nuToPValPilot = function(matrix,n,s,mean, nuVals){
+        wg = numeric(n)
+        for (i in 1:n){
+          wg[i] = sum(abs(matrix[i,] - mean[i])^2)/(s-2)
+        }
+        
+        fStat = wg/nuVals
+        pValsPilot = pf(fStat,1,1)
+        
+        return(pValsPilot)
+      }
   })
   
 })

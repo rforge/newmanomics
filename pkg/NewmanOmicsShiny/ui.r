@@ -4,9 +4,9 @@ shinyUI(fluidPage(
   
   titlePanel(title = "Neumann Statistic"),
   sidebarLayout(
-    sidebarPanel(("Input Dataset"),
+    sidebarPanel(("Select statistic to run"),
                  
-                 radioButtons("choice","Select Option",list("Banked","Paired", "Pilot"),"Banked"),
+                 radioButtons("choice","Type",list("Banked","Paired", "Pilot"),"Banked"),
                  
                  conditionalPanel(condition = "input.choice=='Banked'",
                                   fileInput("file1", "Choose CSV File",
@@ -43,14 +43,14 @@ shinyUI(fluidPage(
                                               ".csv")
                                   ),
                                   sliderInput("pVal", "Select your P value: ",
-                                              min = 0, max = 1, value = .05, step = .05)
+                                              min = 0, max = .1, value = .05, step = .01)
                                   
                                   )
                ),
      
       mainPanel(
       h1("Results"),
-      plotOutput("myPlot")
+      plotOutput(outputId = "pilotStat", height = "300px")
      
       
       )

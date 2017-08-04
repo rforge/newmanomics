@@ -11,5 +11,5 @@ Description: Extends the classical Newman studentized range statistic
   or other expression data
 License: Apache License (== 2.0)
 Depends: R (>= 3.2.0)
-Imports: methods
+Imports: methods, stats, matrixStats
 URL: http://oompa.r-forge.r-project.org/

@@ -20,6 +20,7 @@ Matrix of p values.
 Banked Newman Statistic for comparing individual samples to a cohort of similar samples.
 }
 \examples{
+\dontrun{
 input1 <- read.csv(file = "filepath.csv",row.names = 1) #Bank Object consisting of row means, estimate of std deviation and background distribution
 input2 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset to be tested against the bank
 input3 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset that comprises the bank
@@ -31,4 +32,4 @@ testSet <- data.matrix(input2)
 bankMatrix <- data.matrix(input3)
 
 bankStat(bankObj, testSet, bankMatrix)
-}
+}}

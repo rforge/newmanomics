@@ -1,3 +1,6 @@
+0. Change the output of pairedTest so it produces both nu statistics
+and p-values. Should use the same format as t.test for the output.
+
 1. Separate building the "bank" from evaluating samples against the bank.
 
 2. Add code to do the pilot studies.

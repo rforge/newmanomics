@@ -1,4 +1,6 @@
-# imports
 import("methods")
+#import("stats")
+import("matrixStats")
 
-# exports
+export("bankStat")
+export("pairedStat")

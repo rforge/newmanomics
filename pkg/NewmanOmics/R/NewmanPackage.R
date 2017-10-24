@@ -1,6 +1,3 @@
-require(matrixStats)
-require(stats)
-
 #' Paired Statistic, used for a one to one comparison of individual samples to another set of similar individual samples
 #' @title Paired Statistic
 #' @param normalMat First set of samples
@@ -61,28 +58,18 @@ pairedStat <- function(normalMat, tumorMat){
 
   return(pValsPaired)
 }
-randNuGen <- function(mean,sd){
-  outerSim <- rnorm(1000000,mean,sd)
-  nuValMat <- matrix(NA, 10000,100)
-
-  temp.means = temp.sd = matrix(NA, 10000,100)
-  SdEst <- numeric(10000)
+randNuGen <- function(mu=0, sigma=1) {
+  ## magic numbers:  ngenes = 10000, ntimes = 100
+  nuValMat <- matrix(NA, 10000, 100) 
 
   for (i in 1:100){
-    vec1 <- sample(outerSim,10000)
-    vec2 <- sample(outerSim,10000)
-
-    for (j in 1:10000){
-      temp.means[j,i] <- mean(c(vec1[j],vec2[j]))
-      temp.sd[j,i] <- sd(c(vec1[j],vec2[j]))
-    }
-    l.mod <- loess(temp.sd[ ,i] ~ temp.means[ ,i])
-    SdEst[i] <- predict(l.mod)
-
-
-    for (k in 1:10000){
-      nuValMat[k,i] <- abs(vec1[k] - vec2[k])/SdEst[i]
-    }
+    vec1 <- rnorm(10000, mu, sigma)
+    vec2 <- rnorm(10000, mu, sigma)
+    means <- (vec1 + vec2)/2
+    sds <- abs(vec1 - vec2)/sqrt(2)
+    l.mod <- loess(sds ~ means)
+    SdEst <- predict(l.mod)
+    nuValMat[,] <- abs(vec1 - vec2)/SdEst
   }
 
   return(nuValMat)

@@ -1,0 +1,15 @@
+1. Separate building the "bank" from evaluating samples against the bank.
+
+2. Add code to do the pilot studies.
+
+3. Split "paired", "bank", and "pilot" into separate source files.
+
+4. Get rid of the nested for loops by vectorizing the code.
+
+5. Figure out what (if anything) from the `inst/DontLose` directory
+  should really be kept.
+
+6. Make real examples for the man pages. Decide if these use real or
+   simulated data.
+
+7. Write a vignette.

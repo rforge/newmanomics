@@ -17,7 +17,7 @@ ps <- pairedStat(normal, tumor)
 toc <- proc.time()
 toc - tic
 attributes(ps) # should be two
-dim(ps$nu.statstics)
+dim(ps$nu.statistics)
 dim(ps$p.values)
 
 summary(ps$nu.statistics)

@@ -57,7 +57,7 @@ pairedStat <- function(normalMat, tumorMat){
   pValsPaired <- nu2PValPaired(matNu, as.vector(randNu))
 
   ## KRC: should we make this a proper object, or just leave it a list?
-  return(list(nu.statistics=randNu, p.values=pValsPaired))
+  return(list(nu.statistics=matNu, p.values=pValsPaired))
 }
 
 ### Generating 1 million Nu values based on the overall mean and std deviation

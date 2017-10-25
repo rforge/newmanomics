@@ -12,7 +12,10 @@ picked <- sample(nrow(lung), 1000)
 normal <- log(1 + as.matrix(lung[picked, 2, drop=FALSE]))
 tumor  <- log(1 + as.matrix(lung[picked, 3, drop=FALSE]))
 
+tic <- proc.time()
 ps <- pairedStat(normal, tumor)
+toc <- proc.time()
+toc - tic
 attributes(ps) # should be two
 dim(ps$nu.statstics)
 dim(ps$p.values)

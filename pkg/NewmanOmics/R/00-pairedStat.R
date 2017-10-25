@@ -17,8 +17,12 @@
 #'
 #' @export
 pairedStat <- function(normalMat, tumorMat){
-
-  #### In case you want to log normalize the dataset before analysis. Do so either by this method (recommended) or a simple log normalization as mentioned in the banked version
+  ## KRC: Why is this advice buried here? Doesn't it belong somewhere
+  ## in the user's docuemntation, like man pages or vignette?
+  ##
+  ## In case you want to log normalize the dataset before analysis.
+  ## Do so either by this method (recommended) or a simple log normalization
+  ## as mentioned in the banked version
   # X = median(normalMat)
   # NX = (0.05/0.95)*X
   # normalMat = log(normalMat+NX,10)
@@ -27,56 +31,58 @@ pairedStat <- function(normalMat, tumorMat){
   # NY = (0.05/0.95)*X
   # tumorMat = log(tumorMat+NX,10)
 
+  ## KRC: Do we need to check that the two matrices are the same size?
+  ## Or just let the first computation throw its own error?
+
+  ## Matrix computation of mean of two things
+  temp.means <- (normalMat + tumorMat) / 2
+  ## Similar comput2tion for SD of two things.
+  temp.sd <- abs(normalMat - tumorMat) / sqrt(2)
+  ## For each column, perform loess fit
   n <- dim(normalMat)[1]
   s <- dim(normalMat)[2]
-
-  MatsdEst = matrix(0,n,s)
-  matNu = matrix(0,n,s)
-
-  temp.means <- (normalMat + tumorMat) / 2
-  temp.sd <- abs(normalMat - tumorMat) / sqrt(2)
-  for (i in 1:s){
+  MatsdEst <- matrix(NA, n, s) # set aside storage
+  for (i in 1:s) {
     l.mod <- loess(temp.sd[ ,i] ~ temp.means[ ,i])
     MatsdEst[ ,i] <- predict(l.mod)
   }
 
+  ## compute the matrix of nu-statistcis
   matNu <- abs(normalMat - tumorMat) / MatsdEst
 
+  ## empirical p-values via simulation
   m <- mean(matNu)
   sd <- sd(matNu)
+  randNu <- randNuGen(m, sd)
+  pValsPaired <- nu2PValPaired(matNu, as.vector(randNu))
 
-  randNu <- randNuGen(m,sd)
-
-  v <- as.vector(randNu)
-
-  pValsPaired <- nu2PValPaired(matNu,v,n,s)
-
+  ## KRC: should we make this a proper object, or just leave it a list?
   return(list(nu.statistics=randNu, p.values=pValsPaired))
 }
+
+### Generating 1 million Nu values based on the overall mean and std deviation
+### of the Nu values obtained from the paired statistic. This will later be
+### used to estimate the p-values.
 randNuGen <- function(mu=0, sigma=1) {
   ## magic numbers:  ngenes = 10000, ntimes = 100
   nuValMat <- matrix(NA, 10000, 100) 
 
   for (i in 1:100){
+    ## simulate a new pair every time
     vec1 <- rnorm(10000, mu, sigma)
     vec2 <- rnorm(10000, mu, sigma)
-    means <- (vec1 + vec2)/2
-    sds <- abs(vec1 - vec2)/sqrt(2)
+    means <- (vec1 + vec2) / 2
+    sds <- abs(vec1 - vec2) / sqrt(2)
     l.mod <- loess(sds ~ means)
     SdEst <- predict(l.mod)
-    nuValMat[,] <- abs(vec1 - vec2)/SdEst
+    nuValMat[,] <- abs(vec1 - vec2) / SdEst
   }
 
   return(nuValMat)
-} ## Generating 1 million Nu values based on the overall mean and std deviation of the Nu values obtained from the paired statistic. This will later be used to estimate the p_values
-
-nu2PValPaired <- function(matrix,vec,n,s){
-  MatP <- matrix(NA,n,s)
-  for (i in 1:n){
-    for (j in 1:s){
-      MatP[i,j] <- length(vec[vec <= matrix[i,j]])/1000000
-    }
-  }
-  return(MatP)
 }
 
+nu2PValPaired <- function(nuMatrix, vec){
+  MatP <- matrix(sapply(nuMatrix, function(x) mean(x > vec)),
+                 nrow(nuMatrix), ncol(nuMatrix))
+  return(MatP)
+}

@@ -82,7 +82,7 @@ randNuGen <- function(mu=0, sigma=1) {
 }
 
 nu2PValPaired <- function(nuMatrix, vec){
-  MatP <- matrix(sapply(nuMatrix, function(x) mean(x > vec)),
+  MatP <- matrix(sapply(nuMatrix, function(x) mean(x < vec)),
                  nrow(nuMatrix), ncol(nuMatrix))
   return(MatP)
 }

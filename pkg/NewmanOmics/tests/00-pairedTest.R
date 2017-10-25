@@ -13,5 +13,12 @@ normal <- log(1 + as.matrix(lung[picked, 2, drop=FALSE]))
 tumor  <- log(1 + as.matrix(lung[picked, 3, drop=FALSE]))
 
 ps <- pairedStat(normal, tumor)
-dim(ps)
-summary(ps)
+attributes(ps) # should be two
+dim(ps$nu.statstics)
+dim(ps$p.values)
+
+summary(ps$nu.statistics)
+summary(ps$p.values)
+
+head(ps$nu.statistics)
+head(ps$p.values)

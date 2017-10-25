@@ -12,7 +12,7 @@ pairedStat(normalMat, tumorMat)
 \item{tumorMat}{Second set of samples}
 }
 \value{
-array of p values
+A list containing two marices: the \code{nu.statistics} and the \code{p.values}.
 }
 \description{
 Paired Statistic, used for a one to one comparison of individual samples to another set of similar individual samples

@@ -1,0 +1,10 @@
+import("methods")
+
+importFrom("stats", "approxfun", "density", "integrate", "loess",
+           "pnorm", "predict", "rnorm", "sd")
+importFrom("utils", "write.csv")
+
+import("matrixStats")
+
+export("bankStat")
+export("pairedStat")

@@ -19,7 +19,7 @@
 #' @param bankObj Compressed representation of the cohort being compared to.
 #' @param testSet Cohort representing the bank.
 #' @param bankMatrix The actual bank.
-#' @return Matrix of p values.
+#' @return A list containing two matrices: the \code{nu.statistics} and the \code{p.values}.
 #' @examples input1 <- read.csv(file = "filepath.csv",row.names = 1) #Bank Object consisting of row means, estimate of std deviation and background distribution
 #' input2 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset to be tested against the bank
 #' input3 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset that comprises the bank
@@ -80,7 +80,7 @@ bankStat <- function(bankObj, testSet, bankMatrix){
 
   #write.csv(matPBanked,"C:/Users/anous/Documents/R/BMI Research/Output/18842_uncorrP.csv", row.names = F) ##Saves uncorrected P Values if you want it to
 
-  return(matPBanked)
+  return(list(nu.statistics = matNuBanked, p.values = matPBanked))
 
 } ### If an input is missing, for example the bankObj, run your code as pvals_uncorr = bankStat(,testSet,bankMatrix)
 

@@ -14,7 +14,7 @@ bankStat(bankObj, testSet, bankMatrix)
 \item{bankMatrix}{The actual bank.}
 }
 \value{
-Matrix of p values.
+A list containing two marices: the \code{nu.statistics} and the \code{p.values}.
 }
 \description{
 Banked Newman Statistic for comparing individual samples to a cohort of similar samples.

@@ -1,0 +1,146 @@
+---
+title: "Testing Alternate Method to Simulate Nu Values"
+author: "Kevin R. Coombes"
+date: "24 October 2017"
+output: 
+  html_document:
+    toc: true
+    highlight: kate
+    theme: yeti
+---
+
+```{r mycss, results="asis", echo=FALSE}
+cat('
+<style type="text/css">
+b, strong {color: red; }
+i, em {color: blue; }
+.defn {color: purple; }
+.para {color: purple;
+      font-weight: bold;
+}
+.figure { text-align: center; }
+.caption { font-weight: bold; }
+</style>
+')
+```
+
+# Version
+
+This script will only work for package versions up through 0.4.2.
+```{r versions}
+if (compareVersion("0.4.2", packageVersion("NewmanOmics")) < 0) {
+  stop("Will not work with newer versions of NewmanOmics")
+}
+```
+
+# Introduction
+We observed that running the `pairedStat` function in the
+`NewmanOmics` package was quite slow.  By profiling the code, we
+learned that almost all of the time was spent in the call to the
+`loess` function inside the routine `randNuGen`. We hypothesized that
+replacing the local smoothing function by a simple global estimate
+(using the mean) would speed up the code considerably without changing
+the results very much.  In this report, we want to test that
+hypothesis.
+
+# Testing
+We begin by loading our standard example for the paired statistic.
+```{r loadExample}
+library(NewmanOmics)
+csvfile <- system.file("extdata", "LungNormalTumorPair.csv",
+                       package="NewmanOmics")
+lung <- read.csv(csvfile)
+summary(lung)
+```
+
+Next, we use the existing code, which relies on the loess function. On
+my laptop, this takes about 90 seconds to run.
+```{r oldFit}
+set.seed(12345)
+picked <- sample(nrow(lung), 1000)
+normal <- log(1 + as.matrix(lung[picked, 2, drop=FALSE]))
+tumor  <- log(1 + as.matrix(lung[picked, 3, drop=FALSE]))
+tic <- proc.time()
+ps <- pairedStat(normal, tumor)
+elapsed <- proc.time() - tic
+elapsed
+```
+
+Now we define our new version of the algorithm.
+```{r altmeth}
+altmeth <- function(mu = 0, sigma = 1) {
+  A <- matrix(rnorm(10000*100, mu, sigma), ncol=100)
+  B <- matrix(rnorm(10000*100, mu, sigma), ncol=100)
+  sdest <- mean( abs(A-B)/sqrt(2) )
+  abs(A-B)/sdest
+}
+```
+
+We manually run the last part of the code, as extracted from the
+`pairedStat` function. This should only ake about 5 or 6 seconds
+```{r useAlt}
+tic <- proc.time()
+m <- mean(ps$nu.statistics)
+sd <- sd(ps$nu.statistics)
+randNu <- altmeth(m, sd)
+pValsPaired <- NewmanOmics:::nu2PValPaired(ps$nu.statistics,
+                                           as.vector(randNu))
+elapsed <- proc.time() - tic
+elapsed
+```
+
+Now we can look at the results. First, we check grossly to see if the
+values look very different.
+```{r fig.cap="Scatter plot of two versions of empirical p-values"}
+plot(pValsPaired, ps$p.values,
+     xlab="New Version", ylab="Old Version")
+abline(0,1, col='red')
+```
+
+On this scale, the differences in the p-values are too small to
+matter.  But we can check the actual size.
+```{r summ}
+summary(as.vector(pValsPaired - ps$p.values))
+```
+
+So, the differences look like they vary less than about 0.01, which
+may be a little bigger than we'd like to see. To get a different view
+of the data, we can plot the differences as a function of the "old"
+definition of p-values.
+```{r fig.cap="Plot of the difference in p-values."}
+plot(ps$p.values, pValsPaired - ps$p.values,
+     xlab="Old Version", ylab="Difference")
+```
+
+Hmm. There are appear to be systematic changes. This _could_, however,
+be a consequence of randomness in the simulations.  One way to check
+is to repeat the computations with a different random seed.
+
+```{r anotherFit}
+set.seed(54321)
+ps2 <- pairedStat(normal, tumor)
+m <- mean(ps2$nu.statistics)
+sd <- sd(ps2$nu.statistics)
+randNu <- altmeth(m, sd)
+pValsPaired2 <- NewmanOmics:::nu2PValPaired(ps2$nu.statistics,
+                                            as.vector(randNu))
+summary(as.vector(pValsPaired2 - ps2$p.values))
+```
+
+Of course, here we can also how much repeating the estimation using
+the same method changes.
+```{r fig.cap="Comparison of p-values when running the old method twice."}
+summary(as.vector(ps$p.values - ps2$p.values))
+plot(ps$p.values, ps2$p.values - ps$p.values,
+     xlab="Old Version", ylab="Difference")
+```
+
+Interesting. The variability in the p-values from one run to
+another of the old code is almost exactly the same as switching
+from the old slow code to the new faster code.
+
+# Conclusion
+We can safely replace the old code with the new code. However,
+we need to keep in mind that the empirical p-value estimates
+are only accurate to about 0.01 when we simualte one million
+fake nu-values.

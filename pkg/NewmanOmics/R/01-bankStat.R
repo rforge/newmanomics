@@ -1,8 +1,11 @@
 # BANKED
 
-# input1 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Output/LuSc_BankObj.csv",row.names = 1) #Bank Object consisting of row means, estimate of std deviation and background distribution
-# input2 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Input/TrisomyPatient_19193.csv", row.names = 1) #Dataset to be tested against the bank
-# input3 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Input/HapMap_209Patients.csv", row.names = 1) #Dataset that comprises the bank
+# input1 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Output/LuSc_BankObj.csv",row.names = 1)
+#Bank Object consisting of row means, estimate of std deviation and background distribution
+# input2 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Input/TrisomyPatient_19193.csv", row.names = 1) 
+#Dataset to be tested against the bank
+# input3 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Input/HapMap_209Patients.csv", row.names = 1) 
+#Dataset that comprises the bank
 # RN <- rownames(input2)
 #
 # bankObj <- data.matrix(input1)

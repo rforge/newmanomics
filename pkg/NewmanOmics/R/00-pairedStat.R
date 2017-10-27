@@ -65,20 +65,10 @@ pairedStat <- function(normalMat, tumorMat){
 ### used to estimate the p-values.
 randNuGen <- function(mu=0, sigma=1) {
   ## magic numbers:  ngenes = 10000, ntimes = 100
-  nuValMat <- matrix(NA, 10000, 100) 
-
-  for (i in 1:100){
-    ## simulate a new pair every time
-    vec1 <- rnorm(10000, mu, sigma)
-    vec2 <- rnorm(10000, mu, sigma)
-    means <- (vec1 + vec2) / 2
-    sds <- abs(vec1 - vec2) / sqrt(2)
-    l.mod <- loess(sds ~ means)
-    SdEst <- predict(l.mod)
-    nuValMat[,] <- abs(vec1 - vec2) / SdEst
-  }
-
-  return(nuValMat)
+  A <- matrix(rnorm(10000*100, mu, sigma), ncol=100)
+  B <- matrix(rnorm(10000*100, mu, sigma), ncol=100)
+  sdest <- mean( abs(A-B)/sqrt(2) )
+  abs(A-B)/sdest
 }
 
 nu2PValPaired <- function(nuMatrix, vec){

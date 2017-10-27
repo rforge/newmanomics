@@ -28,3 +28,5 @@ Split "paired" and "bank" into separate source files.
    simulated data.
 
 9. Write a vignette.
+
+10. Fix the output of pairedStat so it preserves row (gene) names.

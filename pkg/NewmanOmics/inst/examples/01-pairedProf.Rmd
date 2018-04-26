@@ -1,0 +1,128 @@
+---
+title: "Testing Alternate Method to Compute Empirical p-Values"
+author: "Kevin R. Coombes"
+date: "26 April 2018"
+output: 
+  html_document:
+    toc: true
+    highlight: kate
+    theme: yeti
+---
+
+```{r mycss, results="asis", echo=FALSE}
+cat('
+<style type="text/css">
+b, strong {color: red; }
+i, em {color: blue; }
+.defn {color: purple; }
+.para {color: purple;
+      font-weight: bold;
+}
+.figure { text-align: center; }
+.caption { font-weight: bold; }
+</style>
+')
+```
+
+# Introduction
+This is the second profiling study. Even after improving (significantly) the
+time taken by the 'ranNuGen' method, the code is still uncofortably slow. We
+like to figure out where time is being taken.
+
+This should only be run with a specific version of the package.
+```{r vers}
+library(NewmanOmics)
+if (packageVersion("NewmanOmics") != "0.6.0") {
+  stop("Wrong NewmanOmics package version")
+}
+```
+
+# Read the Data
+We use our luing cancer example for profiling.
+```{r lungdata}
+csvfile <- system.file("extdata", "LungNormalTumorPair.csv",
+                       package="NewmanOmics")
+lung <- read.csv(csvfile)
+summary(lung)
+```
+# Profiling
+Now we can profile the overall process.
+```{r profile}
+set.seed(12345)
+Rprof("myProfile01.out")
+for (ignore in 1:10) {
+  picked <- sample(nrow(lung), 1000)
+  normal <- log(1 + as.matrix(lung[picked, 2, drop=FALSE]))
+  tumor  <- log(1 + as.matrix(lung[picked, 3, drop=FALSE]))
+  ps <- pairedStat(normal, tumor)
+  assign(paste("ps", ignore, sep='.'), ps, .GlobalEnv)
+}
+Rprof()
+summaryRprof("myProfile01.out")
+```
+Basically, the time is now spent inside `mean` and `<`, which we can
+locate inside the function `nu2PValPaired` function.  We should be able
+to speed up the computation by using a binary search in place of the
+existing construction, `mean(x < vec)`.
+
+# Speeding Things Up
+We use the following versionof a binary search tool. It was originally
+written by Chao Liu on stackoverflow at
+(https://stackoverflow.com/questions/20133344/find-closest-value-in-a-vector-with-binary-search)
+We have modified it to 
+```{r nvs}
+NearestValueSearch <- function(x, w){
+  ## A simple binary search algorithm
+  ## Assume the w vector is sorted so we can use binary search
+  left <- 1
+  right <- length(w)
+  while(right - left > 1){
+    middle <- floor((left + right) / 2)
+    if(x < w[middle]){
+      right <- middle
+    }
+    else{
+      left <- middle
+    }
+  }
+  if(abs(x - w[right]) < abs(x - w[left])){
+    return(right)
+  }
+  else{
+    return(left)
+  }
+}
+```
+
+Here is how we incorporate that into the function that computes
+empirical p-values.
+```{r altalg}
+altnu2PValPaired <- function(nuMatrix, vec){
+  vec <- sort(vec)
+  MatP <- matrix(sapply(nuMatrix, function(x) {
+    1 - NearestValueSearch(x, vec)/length(vec)
+  }), nrow(nuMatrix), ncol(nuMatrix))
+  return(MatP)
+}
+```
+
+Now let's see how long just this part takes with the new method.
+```{r reprof}
+set.seed(54321)
+Rprof("myProfileAlt.out")
+for (ignore in 1:10) {
+  ps <- get(paste("ps", ignore, sep='.'), .GlobalEnv)
+  numb <- NewmanOmics:::randNuGen()
+  x2 <- altnu2PValPaired(ps$nu.statistics, numb)
+  print(summary(ps$p.values - x2))
+}
+Rprof()
+summaryRprof("myProfileAlt.out")
+```
+
+This is clearly **lots** faster.
+
+# Appendix
+```{r si}
+sessionInfo()
+```

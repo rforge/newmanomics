@@ -1,28 +1,35 @@
-pairedStat <- function(normalMat, tumorMat){
-  ## KRC: Why is this advice buried here? Doesn't it belong somewhere
-  ## in the user's docuemntation, like man pages or vignette?
-  ##
-  ## In case you want to log normalize the dataset before analysis.
-  ## Do so either by this method (recommended) or a simple log normalization
-  ## as mentioned in the banked version
-  # X = median(normalMat)
-  # NX = (0.05/0.95)*X
-  # normalMat = log(normalMat+NX,10)
-  #
-  # Y = median(tumorMat)
-  # NY = (0.05/0.95)*X
-  # tumorMat = log(tumorMat+NX,10)
 
+pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
+
+  if (is.list(baseData)) {
+    x <- baseData
+    baseData <- cbind(lapply(x, function(entry) {entry[,1]}))
+    perturbedData <- cbind(lapply(x, function(entry) {entry[,2]}))
+    rm(x)
+  } else if (is.null(perturbedData)) {
+    if (is.null(pairing)) {
+      stop("You must supply at least one of 'perturbedData' or 'pairing'.")
+    }
+    pos <- which(pairing > 0)
+    pos <- pos[order(pairing[pos])]
+    neg <- which(pairing < 0)
+    neg <- neg[order(pairing[order(neg)])]  
+    x <- baseData
+    baseData <- x[,neg]
+    perturbedData <- x[,pos]
+    rm(x, pos, neg)
+  }
+  
   ## KRC: Do we need to check that the two matrices are the same size?
   ## Or just let the first computation throw its own error?
 
   ## Matrix computation of mean of two things
-  temp.means <- (normalMat + tumorMat) / 2
+  temp.means <- (baseData + perturbedData) / 2
   ## Similar comput2tion for SD of two things.
-  temp.sd <- abs(normalMat - tumorMat) / sqrt(2)
+  temp.sd <- abs(baseData - perturbedData) / sqrt(2)
   ## For each column, perform loess fit
-  n <- dim(normalMat)[1]
-  s <- dim(normalMat)[2]
+  n <- dim(baseData)[1]
+  s <- dim(baseData)[2]
   MatsdEst <- matrix(NA, n, s) # set aside storage
   for (i in 1:s) {
     l.mod <- loess(temp.sd[ ,i] ~ temp.means[ ,i])
@@ -30,7 +37,7 @@ pairedStat <- function(normalMat, tumorMat){
   }
 
   ## compute the matrix of nu-statistcis
-  matNu <- abs(normalMat - tumorMat) / MatsdEst
+  matNu <- abs(baseData - perturbedData) / MatsdEst
 
   ## empirical p-values via simulation
   m <- mean(matNu)

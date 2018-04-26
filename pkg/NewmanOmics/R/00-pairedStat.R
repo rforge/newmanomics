@@ -3,8 +3,8 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
 
   if (is.list(baseData)) {
     x <- baseData
-    baseData <- cbind(lapply(x, function(entry) {entry[,1]}))
-    perturbedData <- cbind(lapply(x, function(entry) {entry[,2]}))
+    baseData <- do.call(cbind, lapply(x, function(entry) {entry[,1]}))
+    perturbedData <- do.call(cbind, lapply(x, function(entry) {entry[,2]}))
     rm(x)
   } else if (is.null(perturbedData)) {
     if (is.null(pairing)) {
@@ -25,7 +25,7 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
 
   ## Matrix computation of mean of two things
   temp.means <- (baseData + perturbedData) / 2
-  ## Similar comput2tion for SD of two things.
+  ## Similar computation for SD of two things.
   temp.sd <- abs(baseData - perturbedData) / sqrt(2)
   ## For each column, perform loess fit
   n <- dim(baseData)[1]
@@ -36,7 +36,7 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
     MatsdEst[ ,i] <- predict(l.mod)
   }
 
-  ## compute the matrix of nu-statistcis
+  ## compute the matrix of nu-statistics
   matNu <- abs(baseData - perturbedData) / MatsdEst
 
   ## empirical p-values via simulation
@@ -60,8 +60,34 @@ randNuGen <- function(mu=0, sigma=1) {
   abs(A-B)/sdest
 }
 
+### originally written by Chao Liu on stackoverflow at
+### https://stackoverflow.com/questions/20133344/find-closest-value-in-a-vector-with-binary-search
+NearestValueSearch <- function(x, w){
+  ## A simple binary search algorithm
+  ## Assume the w vector is sorted so we can use binary search
+  left <- 1
+  right <- length(w)
+  while(right - left > 1){
+    middle <- floor((left + right) / 2)
+    if(x < w[middle]){
+      right <- middle
+    }
+    else{
+      left <- middle
+    }
+  }
+  if(abs(x - w[right]) < abs(x - w[left])){
+    return(right)
+  }
+  else{
+    return(left)
+  }
+}
+
 nu2PValPaired <- function(nuMatrix, vec){
-  MatP <- matrix(sapply(nuMatrix, function(x) mean(x < vec)),
-                 nrow(nuMatrix), ncol(nuMatrix))
+  vec <- sort(vec)
+  MatP <- matrix(sapply(nuMatrix, function(x) {
+    1 - NearestValueSearch(x, vec)/length(vec)
+  }), nrow(nuMatrix), ncol(nuMatrix))
   return(MatP)
 }

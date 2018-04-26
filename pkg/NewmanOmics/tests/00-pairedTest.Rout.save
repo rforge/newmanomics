@@ -1,6 +1,6 @@
 
-R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -19,73 +19,108 @@ Type 'q()' to quit R.
 > 
 > csvfile <- system.file("extdata", "LungNormalTumorPair.csv",
 +                        package="NewmanOmics")
-> 
-> lung <- read.csv(csvfile)
+> lung <- read.csv(csvfile, row.names=1)
 > summary(lung)
-        Gene.ID      TCGA.38.4625.11A.01R.1758.07 TCGA.38.4625.01A.01R.1758.07
- ?|100130426:    1   Min.   :     0.0             Min.   :     0.0            
- ?|100133144:    1   1st Qu.:     5.5             1st Qu.:     7.2            
- ?|100134869:    1   Median :   177.6             Median :   210.9            
- ?|10357    :    1   Mean   :  1216.7             Mean   :  1152.7            
- ?|10431    :    1   3rd Qu.:   773.4             3rd Qu.:   850.5            
- ?|136542   :    1   Max.   :517227.5             Max.   :839878.9            
- (Other)    :20525                                                            
+ TCGA.38.4625.11A.01R.1758.07 TCGA.38.4625.01A.01R.1758.07
+ Min.   :     0.0             Min.   :     0.0            
+ 1st Qu.:     5.5             1st Qu.:     7.2            
+ Median :   177.6             Median :   210.9            
+ Mean   :  1216.7             Mean   :  1152.7            
+ 3rd Qu.:   773.4             3rd Qu.:   850.5            
+ Max.   :517227.5             Max.   :839878.9            
+> lung <- as.matrix(log(1 + lung))
 > 
 > set.seed(12345)
-> picked <- sample(nrow(lung), 1000)
-> 
-> normal <- log(1 + as.matrix(lung[picked, 2, drop=FALSE]))
-> tumor  <- log(1 + as.matrix(lung[picked, 3, drop=FALSE]))
+> normal <- lung[, 1, drop=FALSE]
+> tumor  <- lung[, 2, drop=FALSE]
 > 
 > tic <- proc.time()
 > ps <- pairedStat(normal, tumor)
 > toc <- proc.time()
 > toc - tic
    user  system elapsed 
-   6.50    1.14    7.64 
+   6.81    0.05    6.88 
 > attributes(ps) # should be two
 $names
 [1] "nu.statistics" "p.values"     
 
 > dim(ps$nu.statistics)
-[1] 1000    1
+[1] 20531     1
 > dim(ps$p.values)
-[1] 1000    1
+[1] 20531     1
 > 
 > summary(ps$nu.statistics)
  TCGA.38.4625.11A.01R.1758.07
- Min.   :0.0000              
- 1st Qu.:0.3567              
- Median :1.0413              
- Mean   :1.2730              
- 3rd Qu.:1.8383              
- Max.   :7.9872              
+ Min.   : 0.0000             
+ 1st Qu.: 0.3357             
+ Median : 1.0023             
+ Mean   : 1.2988             
+ 3rd Qu.: 1.9462             
+ Max.   :18.4447             
 > summary(ps$p.values)
-       V1          
- Min.   :0.000006  
- 1st Qu.:0.299648  
- Median :0.556339  
- Mean   :0.557196  
- 3rd Qu.:0.840638  
- Max.   :1.000000  
+       V1        
+ Min.   :0.0000  
+ 1st Qu.:0.2723  
+ Median :0.5709  
+ Mean   :0.5564  
+ 3rd Qu.:0.8499  
+ Max.   :1.0000  
 > 
 > head(ps$nu.statistics)
-      TCGA.38.4625.11A.01R.1758.07
-14801                    1.2573989
-17980                    0.5984275
-15623                    0.1950775
-18191                    0.7565317
-9371                     1.3471064
-3415                     0.4054840
+            TCGA.38.4625.11A.01R.1758.07
+?|100130426                    0.0000000
+?|100133144                    0.3084685
+?|100134869                    0.7578389
+?|10357                        0.5257639
+?|10431                        1.6200054
+?|136542                       0.0000000
 > head(ps$p.values)
          [,1]
-[1,] 0.477741
-[2,] 0.735543
-[3,] 0.912667
-[4,] 0.669401
-[5,] 0.447142
-[6,] 0.819358
+[1,] 0.999999
+[2,] 0.862121
+[3,] 0.668867
+[4,] 0.766898
+[5,] 0.360506
+[6,] 0.999999
+> 
+> ps2 <- pairedStat(list(lung))
+> summary(ps2$nu.statistics)
+       V1         
+ Min.   : 0.0000  
+ 1st Qu.: 0.3357  
+ Median : 1.0023  
+ Mean   : 1.2988  
+ 3rd Qu.: 1.9462  
+ Max.   :18.4447  
+> summary(ps2$p.values)
+       V1        
+ Min.   :0.0000  
+ 1st Qu.:0.2725  
+ Median :0.5706  
+ Mean   :0.5563  
+ 3rd Qu.:0.8493  
+ Max.   :1.0000  
+> 
+> summary(ps$nu.statistics - ps2$nu.statistics)
+ TCGA.38.4625.11A.01R.1758.07
+ Min.   :0                   
+ 1st Qu.:0                   
+ Median :0                   
+ Mean   :0                   
+ 3rd Qu.:0                   
+ Max.   :0                   
+> summary(pdiff <- ps$p.values - ps2$p.values)
+       V1            
+ Min.   :-8.830e-04  
+ 1st Qu.:-2.000e-04  
+ Median : 2.200e-05  
+ Mean   : 9.801e-05  
+ 3rd Qu.: 4.080e-04  
+ Max.   : 9.590e-04  
+> 
+> plot(ps$nu.statistics, pdiff)
+> abline(h=0)
 > 
 > proc.time()
    user  system elapsed 
-   6.82    1.25    8.12 
+  14.22    0.28   14.61 

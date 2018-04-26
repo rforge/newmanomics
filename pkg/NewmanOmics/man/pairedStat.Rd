@@ -69,17 +69,23 @@ A list containing two marices: the \code{nu.statistics} and the \code{p.values}.
   pairing = c(-1,1))}. 
 }
 \examples{
-# Datasets need to be arranged so that there is a one-once organizational
-# correspondence between the normals and tumors/ before and after treatment patients
-\dontrun{
-input1 <- read.csv(file = "filepath", row.names = 1)
-input2 <- read.csv(file = "filepath.csv", row.names = 1)
-RN <- rownames(input2)
+data(GSE6631)
+Normal <- GSE6631[, c(1,3)]
+Tumor <- GSE6631[, c(2,4)]
 
+### input two separate matrices
+ps1 <- pairedStat(Normal, Tumor)
+summary(ps1$nu.statistics)
+summary(ps1$p.values)
 
-baseData <- data.matrix(input1)
-perturbedData <- data.matrix(input2)
+### input one combined matrix and a pairing vector
+ps2 <- pairedStat(GSE6631, pairing=c(-1, 1, -2, 2))
+summary(ps2$nu.statistics)
+summary(ps2$p.values)
 
-pairedStat(baseData, perturbedData)
-}
+### input a list of matrix-pairs
+ps3 <- pairedStat(list(One = GSE6631[, 1:2],
+                       Two = GSE6631[, 3:4]))
+summary(ps3$nu.statistics)
+summary(ps3$p.values)
 }

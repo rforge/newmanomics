@@ -17,24 +17,6 @@
 ## keeping the log bc it helps with nonNormal data
 #  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4120293/
 
-#' Banked Newman Statistic for comparing individual samples to a cohort of similar samples.
-#' @title Banked Statistic
-#' @param bankObj Compressed representation of the cohort being compared to.
-#' @param testSet Cohort representing the bank.
-#' @param bankMatrix The actual bank.
-#' @return A list containing two matrices: the \code{nu.statistics} and the \code{p.values}.
-#' @examples input1 <- read.csv(file = "filepath.csv",row.names = 1) #Bank Object consisting of row means, estimate of std deviation and background distribution
-#' input2 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset to be tested against the bank
-#' input3 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset that comprises the bank
-#'
-#' RN <- rownames(input2)
-#'
-#' bankObj <- data.matrix(input1)
-#' testSet <- data.matrix(input2)
-#' bankMatrix <- data.matrix(input3)
-#'
-#' bankStat(bankObj, testSet, bankMatrix)
-#' @export
 bankStat <- function(bankObj, testSet, bankMatrix){
 
   #### In case you want to log normalize the data before running the statistic

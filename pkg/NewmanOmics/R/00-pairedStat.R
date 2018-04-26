@@ -1,21 +1,3 @@
-#' Paired Statistic, used for a one to one comparison of individual samples to another set of similar individual samples
-#' @title Paired Statistic
-#' @param normalMat First set of samples
-#' @param tumorMat Second set of samples
-#' @return A list containing two matrices: the \code{nu.statistics} and the \code{p.values}.
-#' @examples #Datasets need to be arranged so that there is a one-one organizational
-#' correspondence between the normals and tumors/ before and after treatment patients.
-#' input1 <- read.csv(file = "filepath", row.names = 1)
-#' input2 <- read.csv(file = "filepath.csv", row.names = 1)
-#' RN <- rownames(input2)
-#'
-#'
-#' normalMat <- data.matrix(input1)
-#' tumorMat <- data.matrix(input2)
-#'
-#' pairedStat(normalMat, tumorMat)
-#'
-#' @export
 pairedStat <- function(normalMat, tumorMat){
   ## KRC: Why is this advice buried here? Doesn't it belong somewhere
   ## in the user's docuemntation, like man pages or vignette?

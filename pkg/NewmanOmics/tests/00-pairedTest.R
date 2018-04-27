@@ -13,7 +13,7 @@ tumor  <- lung[, 2, drop=FALSE]
 tic <- proc.time()
 ps <- pairedStat(normal, tumor)
 toc <- proc.time()
-toc - tic
+all(toc - tic < 10, na.rm=TRUE) # takes less than 7s on my PC
 attributes(ps) # should be two
 dim(ps$nu.statistics)
 dim(ps$p.values)

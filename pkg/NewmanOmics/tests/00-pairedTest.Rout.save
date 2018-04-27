@@ -28,7 +28,7 @@ Type 'q()' to quit R.
  Mean   :  1216.7             Mean   :  1152.7            
  3rd Qu.:   773.4             3rd Qu.:   850.5            
  Max.   :517227.5             Max.   :839878.9            
-> lung <- as.matrix(log(1 + lung))
+> lung <- as.matrix(log2(1 + lung))
 > 
 > set.seed(12345)
 > normal <- lung[, 1, drop=FALSE]
@@ -37,9 +37,8 @@ Type 'q()' to quit R.
 > tic <- proc.time()
 > ps <- pairedStat(normal, tumor)
 > toc <- proc.time()
-> toc - tic
-   user  system elapsed 
-   6.81    0.05    6.88 
+> all(toc - tic < 10, na.rm=TRUE) # takes less than 7s on my PC
+[1] TRUE
 > attributes(ps) # should be two
 $names
 [1] "nu.statistics" "p.values"     
@@ -123,4 +122,4 @@ $names
 > 
 > proc.time()
    user  system elapsed 
-  14.22    0.28   14.61 
+  14.35    0.26   14.64 

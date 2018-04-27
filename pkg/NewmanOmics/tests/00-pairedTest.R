@@ -4,7 +4,7 @@ csvfile <- system.file("extdata", "LungNormalTumorPair.csv",
                        package="NewmanOmics")
 lung <- read.csv(csvfile, row.names=1)
 summary(lung)
-lung <- as.matrix(log(1 + lung))
+lung <- as.matrix(log2(1 + lung))
 
 set.seed(12345)
 normal <- lung[, 1, drop=FALSE]

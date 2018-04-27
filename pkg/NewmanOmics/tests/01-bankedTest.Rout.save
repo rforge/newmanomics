@@ -1,0 +1,52 @@
+
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(NewmanOmics)
+> 
+> csvfile <- system.file("extdata", "GSE6631_Head&NeckSq.csv",
++                        package="NewmanOmics")
+> HN <- as.matrix(read.csv(csvfile, row.names=1))
+> HN <- log2((1/19)*median(HN) + HN)
+> 
+> set.seed(12345)
+> picked <- sample(nrow(HN), 2000)
+> bankMatrix <- HN[picked, seq(1, ncol(HN), 2)]
+> testSet <- HN[picked, seq(2, 6, 2)]
+> 
+> bs <- bankStat(testSet = testSet, bankMatrix = bankMatrix)
+[1] "P vals done"
+> 
+> summary(bs$nu.statistics)
+    Cancer.1          Cancer.2          Cancer.3       
+ Min.   :-7.7013   Min.   :-6.3847   Min.   :-6.60423  
+ 1st Qu.:-0.5759   1st Qu.:-0.5890   1st Qu.:-0.63814  
+ Median : 0.3333   Median : 0.3041   Median :-0.11273  
+ Mean   : 0.1719   Mean   : 0.2159   Mean   : 0.02416  
+ 3rd Qu.: 0.9990   3rd Qu.: 1.0504   3rd Qu.: 0.51641  
+ Max.   :13.0513   Max.   :10.6148   Max.   :11.94726  
+> summary(bs$p.values)
+       V1               V2               V3        
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.3140   1st Qu.:0.3101   1st Qu.:0.2958  
+ Median :0.6081   Median :0.5987   Median :0.4610  
+ Mean   :0.5512   Mean   :0.5537   Mean   :0.4858  
+ 3rd Qu.:0.7967   3rd Qu.:0.8086   3rd Qu.:0.6654  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+> 
+> proc.time()
+   user  system elapsed 
+   4.53    0.15    4.69 

@@ -1,8 +1,10 @@
 \name{bankStat}
 \alias{bankStat}
+\alias{createBank}
 \title{Banked Statistic}
 \usage{
 bankStat(bankObj, testSet, bankMatrix)
+createBank(bankMatrix)
 }
 \arguments{
 \item{bankObj}{Compressed representation of the cohort being compared to.}

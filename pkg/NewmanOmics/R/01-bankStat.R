@@ -1,62 +1,67 @@
 # BANKED
 
-# input1 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Output/LuSc_BankObj.csv",row.names = 1)
-#Bank Object consisting of row means, estimate of std deviation and background distribution
-# input2 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Input/TrisomyPatient_19193.csv", row.names = 1) 
-#Dataset to be tested against the bank
-# input3 <- read.csv(file = "C:/Users/anous/Documents/R/BMI Research/Input/HapMap_209Patients.csv", row.names = 1) 
-#Dataset that comprises the bank
-# RN <- rownames(input2)
-#
-# bankObj <- data.matrix(input1)
-# testSet <- data.matrix(input2)
-# bankMatrix <- data.matrix(input3)
+roam <- function(M) {
+  as.vector(matrixMean(M))
+}
 
-## Actual Statistic
+stand <- function(M, mu) {
+  sqrt(as.vector(matrixVar(M, mu)))
+}
 
-## keeping the log bc it helps with nonNormal data
-#  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4120293/
+### INTERNAL
+### Get the background distribution of "unusual" values in the bank
+nuValsIterBank <- function(matrix) {
+  n <- nrow(matrix)
+  s <- ncol(matrix)
+  temp.means = temp.sd = matsdEst = matNu = matrix(NA,n,s)
 
+  for (j in 1:s){
+    temp.means[ ,j] <- roam(matrix[ ,-j])
+    temp.sd[ ,j] <- stand(matrix[ ,-j], temp.means[,j])
+    l.mod <- loess(temp.sd[ ,j] ~ temp.means[ ,j])
+    matsdEst[ ,j] <- predict(l.mod)
+  }
+  matNu <- (matrix - temp.means)/matsdEst
+  return(matNu)
+}
+
+### EXTERNAL
+### prepare a "bank" of normal samples against which to test an individual
+createBank <- function(bankMatrix) {
+  ## warn if data appears to be on the raw scale
+  if (diff(range(bankMatrix)) > 100) {
+    warning("createBank: Data appears to be on the raw scale and not on a log scale.")
+  }
+  ## Compute mean and standard deviation
+  bankMeans  <- roam(bankMatrix)
+  bankSD <- stand(bankMatrix, bankMeans)
+  ## Fit a loess model, since we assume SD is a smooth function of the mean
+  loess.model <- loess(bankSD ~ bankMeans)
+  sdEst <- predict(loess.model)
+  ## bundle the results
+  rowStats <- data.frame(mean=bankMeans, SD=bankSD, sdEst=sdEst)
+  ##
+  background <- nuValsIterBank(bankMatrix)
+  ## return a list
+  list(rowStats = rowStats, background = background)
+}
+
+### EXTERNAL
+### Primary interface; compute the actual Newman banked statistic
 bankStat <- function(bankObj, testSet, bankMatrix){
-
-  #### In case you want to log normalize the data before running the statistic
-  # X = median(testSet)
-  # NX = (0.05/0.95)*X
-  # testSet = log(testSet+NX,10)
-  ### testSet = log(testSet,2) ##If you want to do a simpler log transform
-
-
   n <- dim(testSet)[1]
   s <- dim(testSet)[2]
 
   if(missing(bankObj)){
-    sBank <- dim(bankMatrix)[2]
+    bankObj <- createBank(bankMatrix)
+  } else if (!missing(bankMatrix)) {
+    stop("You should only supply one of 'bankObj' or 'bankMatrix'.")
+  }
+  temp.means <- bankObj$rowStats$mean
+  sdEst <- bankObj$rowStats$sdEst
+  Back_dist_iter <- bankObj$background
 
-    temp.means  <- unname(rowMeans(bankMatrix))
-    temp.sd <- rowSds(bankMatrix)
-
-    loess.model <- loess(temp.sd ~ temp.means)
-    sdEst <- predict(loess.model)
-
-    Back_dist_iter <- nuValsIterBank(bankMatrix, n, sBank)
-
-    bankObj <- as.matrix(c(temp.means,sdEst,Back_dist_iter))
-    dim(bankObj) <- c(n,sBank+2)
-
-
-#NO!!    write.csv(bankObj,"C:/Users/anous/Documents/R/BMI Research/Output/18842_bankObj.csv") #Saves the bankObject for future use
-
-  } else if(missing(bankMatrix)) {
-    sBank <- dim(bankObj)[2]-2
-
-    temp.means <- bankObj[,1]
-    sdEst <- bankObj[,2]
-    Back_dist_iter <- bankObj[,3:(sBank+2)]
-
-
-  } else{print("error")}
-
-  matNuBank <- nuValsBank(matrix = testSet,mean = temp.means, sd = sdEst)
+  matNuBank <- nuValsBank(matrix = testSet, mean = temp.means, sd = sdEst)
 
   matPBanked <- pValuesBanked(matrix = matNuBank, Background = Back_dist_iter, n, s)
 
@@ -64,25 +69,14 @@ bankStat <- function(bankObj, testSet, bankMatrix){
 
   return(list(nu.statistics = matNuBank, p.values = matPBanked))
 
-} ### If an input is missing, for example the bankObj, run your code as pvals_uncorr = bankStat(,testSet,bankMatrix)
+}
+### If an input is missing, for example the bankObj, run your code as
+###       pvals_uncorr = bankStat(,testSet,bankMatrix)
 
 nuValsBank<- function(matrix, mean, sd){
   centered <- sweep(matrix, 1, mean, "-")
   scaled <- sweep(centered, 1, sd, '/')
   return(scaled)
-}
-
-nuValsIterBank <- function(matrix,n,s){
-  temp.means = temp.sd = matsdEst = matNu = matrix(NA,n,s)
-
-  for (j in 1:s){
-    temp.means[ ,j] <- rowMeans(matrix[ ,-j])
-    temp.sd[ ,j] <- rowSds(matrix[ ,-j])
-    l.mod <- loess(temp.sd[ ,j] ~ temp.means[ ,j])
-    matsdEst[ ,j] <- predict(l.mod)
-  }
-  matNu <- (matrix - temp.means)/matsdEst
-  return(matNu)
 }
 
 pValuesBanked <- function(matrix, Background, n, s){

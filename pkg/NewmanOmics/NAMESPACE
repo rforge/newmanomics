@@ -4,7 +4,7 @@ importFrom("stats", "approxfun", "density", "integrate", "loess",
            "pnorm", "predict", "rnorm", "sd")
 importFrom("utils", "write.csv")
 
-import("matrixStats")
+importFrom("oompaBase", "matrixMean", "matrixVar")
 
-export("bankStat")
+export("bankStat", "createBank")
 export("pairedStat")

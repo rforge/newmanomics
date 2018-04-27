@@ -38,13 +38,13 @@ bankStat <- function(bankObj, testSet, bankMatrix){
     loess.model <- loess(temp.sd ~ temp.means)
     sdEst <- predict(loess.model)
 
-    Back_dist_iter <<- nuValsIterBank(bankMatrix, n, sBank)
+    Back_dist_iter <- nuValsIterBank(bankMatrix, n, sBank)
 
     bankObj <- as.matrix(c(temp.means,sdEst,Back_dist_iter))
     dim(bankObj) <- c(n,sBank+2)
 
 
-    write.csv(bankObj,"C:/Users/anous/Documents/R/BMI Research/Output/18842_bankObj.csv") #Saves the bankObject for future use
+#NO!!    write.csv(bankObj,"C:/Users/anous/Documents/R/BMI Research/Output/18842_bankObj.csv") #Saves the bankObject for future use
 
   } else if(missing(bankMatrix)) {
     sBank <- dim(bankObj)[2]-2
@@ -56,27 +56,20 @@ bankStat <- function(bankObj, testSet, bankMatrix){
 
   } else{print("error")}
 
-  matNuBank <<- nuValsBank(matrix = testSet,mean = temp.means, sd = sdEst, n, s = s)
-  #write.csv(matNuBank,"C:/Users/anous/Documents/R/BMI Research/Output/NuVals_18842.csv") ## Saves Nu values if you want to
+  matNuBank <- nuValsBank(matrix = testSet,mean = temp.means, sd = sdEst)
 
   matPBanked <- pValuesBanked(matrix = matNuBank, Background = Back_dist_iter, n, s)
 
   print("P vals done")
 
-  #write.csv(matPBanked,"C:/Users/anous/Documents/R/BMI Research/Output/18842_uncorrP.csv", row.names = F) ##Saves uncorrected P Values if you want it to
-
-  return(list(nu.statistics = matNuBanked, p.values = matPBanked))
+  return(list(nu.statistics = matNuBank, p.values = matPBanked))
 
 } ### If an input is missing, for example the bankObj, run your code as pvals_uncorr = bankStat(,testSet,bankMatrix)
 
-nuValsBank <- function(matrix,mean,sd,n,s){
-  matNu <- matrix(0,n,s)
-  for (i in 1:n){
-    for (j in 1:s){
-      matNu[i,j] <- ((matrix[i,j]) - (mean[i]))/sd[i]
-    }
-  }
-  return(matNu)
+nuValsBank<- function(matrix, mean, sd){
+  centered <- sweep(matrix, 1, mean, "-")
+  scaled <- sweep(centered, 1, sd, '/')
+  return(scaled)
 }
 
 nuValsIterBank <- function(matrix,n,s){
@@ -87,10 +80,8 @@ nuValsIterBank <- function(matrix,n,s){
     temp.sd[ ,j] <- rowSds(matrix[ ,-j])
     l.mod <- loess(temp.sd[ ,j] ~ temp.means[ ,j])
     matsdEst[ ,j] <- predict(l.mod)
-    for (k in 1:n){
-      matNu[k,j] <- (matrix[k,j] - temp.means[k,j])/matsdEst[k,j]
-    }
   }
+  matNu <- (matrix - temp.means)/matsdEst
   return(matNu)
 }
 

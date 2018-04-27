@@ -8,7 +8,8 @@ Build test code for running the pairedTest function.
 2. DONE: KRC: 2017-10-25 1:30 PM
 Get rid of the nested for loops by vectorizing the code.
 
-3. The `pairedStat code is still slow (althoough it passes the
+3. DONE: KRC: 2018-04-27 1:00 PM
+The `pairedStat code is still slow (althoough it passes the
 regression test by not changing the test output). We need to profile
 it to figure out why it is so slow. I suspect that it's in the random
 simulation code. Note that after removing all nested loops, takes
@@ -22,11 +23,19 @@ Split "paired" and "bank" into separate source files.
 
 6. Add code to do the pilot studies.
 
-7. Separate building the "bank" from evaluating samples against the bank.
+7. DONE: KRC; 2018-04-27 1:00 PM
+Separate building the "bank" from evaluating samples against the bank.
 
 8. Make real examples for the man pages. Decide if these use real or
    simulated data.
 
 9. Write a vignette.
 
-10. Fix the output of pairedStat so it preserves row (gene) names.
+10. DONE: KRC: 2018=04-27 1:00 PM
+Fix the output of pairedStat so it preserves row (gene) names.
+
+11: Clean up the inst/extdata folder to remove stuff that isn't
+abso0lutely necessary.
+
+12. Decide what to includen in the "data" directory. Can possibly move
+anything large to the "oompaDaqta" package.

@@ -14,3 +14,12 @@ bs <- bankStat(testSet = testSet, bankMatrix = bankMatrix)
 
 summary(bs$nu.statistics)
 summary(bs$p.values)
+
+bankObj <- createBank(bankMatrix)
+summary(bankObj$rowStats)
+dim(bankObj$background)
+mean(bankObj$background)
+range(bankObj$background)
+
+bs2 <- bankStat(bankObj, testSet)
+all(bs$nu.statistics == bs2$nu.statistics)

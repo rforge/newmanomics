@@ -47,6 +47,27 @@ Type 'q()' to quit R.
  3rd Qu.:0.7967   3rd Qu.:0.8086   3rd Qu.:0.6654  
  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
 > 
+> bankObj <- createBank(bankMatrix)
+> summary(bankObj$rowStats)
+      mean              SD              sdEst       
+ Min.   : 3.988   Min.   :0.04772   Min.   :0.1062  
+ 1st Qu.: 5.273   1st Qu.:0.18920   1st Qu.:0.2814  
+ Median : 6.573   Median :0.26679   Median :0.3600  
+ Mean   : 6.682   Mean   :0.33845   Mean   :0.3378  
+ 3rd Qu.: 7.768   3rd Qu.:0.41539   3rd Qu.:0.3909  
+ Max.   :13.369   Max.   :2.13707   Max.   :0.6071  
+> dim(bankObj$background)
+[1] 2000   22
+> mean(bankObj$background)
+[1] 0.004650279
+> range(bankObj$background)
+[1] -8.092244 14.276889
+> 
+> bs2 <- bankStat(bankObj, testSet)
+[1] "P vals done"
+> all(bs$nu.statistics == bs2$nu.statistics)
+[1] TRUE
+> 
 > proc.time()
    user  system elapsed 
-   4.53    0.15    4.69 
+   6.06    0.20    6.27 

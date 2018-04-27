@@ -1,7 +1,10 @@
 \name{bankStat}
 \alias{bankStat}
 \alias{createBank}
-\title{Banked Statistic}
+\title{Newman Banked Statistic}
+\description{
+The Newman Banked Statistic is used to compare an individual sample to a cohort of similar samples.
+}
 \usage{
 bankStat(bankObj, testSet, bankMatrix)
 createBank(bankMatrix)
@@ -9,23 +12,23 @@ createBank(bankMatrix)
 \arguments{
 \item{bankObj}{Compressed representation of the cohort being compared to.}
 
-\item{testSet}{Cohort representing the bank.}
+\item{testSet}{Matrix containing data from one or more individual
+  samples to be compared to the bank.}
 
-\item{bankMatrix}{The actual bank.}
+\item{bankMatrix}{Data for the bank of "normal" or "untreated"
+   or "baseline" control samples.}
 }
 \value{
-A list containing two marices: the \code{nu.statistics} and the \code{p.values}.
-}
-\description{
-Banked Newman Statistic for comparing individual samples to a cohort of similar samples.
+A list containing two matrices: the \code{nu.statistics} and the \code{p.values}.
 }
 \examples{
 \dontrun{
-input1 <- read.csv(file = "filepath.csv",row.names = 1) #Bank Object consisting of row means, estimate of std deviation and background distribution
-input2 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset to be tested against the bank
-input3 <- read.csv(file = "filepath.csv", row.names = 1) #Dataset that comprises the bank
-
-RN <- rownames(input2)
+# Bank Object consisting of row means, estimate of std deviation and background distribution
+input1 <- read.csv(file = "filepath.csv",row.names = 1) 
+# Dataset to be tested against the bank
+input2 <- read.csv(file = "filepath.csv", row.names = 1)
+# Dataset that comprises the bank
+input3 <- read.csv(file = "filepath.csv", row.names = 1)
 
 bankObj <- data.matrix(input1)
 testSet <- data.matrix(input2)

@@ -1,0 +1,69 @@
+---
+title: "Profiling the Banked Statistic"
+author: "Kevin R. Coombes"
+date: "26 April 2018"
+output: 
+  html_document:
+    toc: true
+    highlight: kate
+    theme: yeti
+---
+
+```{r mycss, results="asis", echo=FALSE}
+cat('
+<style type="text/css">
+b, strong {color: red; }
+i, em {color: blue; }
+.defn {color: purple; }
+.para {color: purple;
+      font-weight: bold;
+}
+.figure { text-align: center; }
+.caption { font-weight: bold; }
+</style>
+')
+```
+
+# Introduction
+This is the second profiling study. Even after improving (significantly) the
+time taken by the 'ranNuGen' method, the code is still uncofortably slow. We
+like to figure out where time is being taken.
+
+This should only be run with a specific version of the package.
+```{r vers}
+library(NewmanOmics)
+if (packageVersion("NewmanOmics") != "0.8.0") {
+  stop("Wrong NewmanOmics package version")
+}
+```
+
+# Read the Data
+We use our head-and-neck cancer example for profiling.
+```{r lungdata}
+csvfile <- system.file("extdata", "GSE6631_Head&NeckSq.csv",
+                       package="NewmanOmics")
+HN <- as.matrix(read.csv(csvfile, row.names=1))
+HN <- log2((1/19)*median(HN) + HN)
+dim(HN)
+colnames(HN)
+```
+# Profiling
+Now we can profile the overall process.
+```{r profile}
+set.seed(12345)
+Rprof("myProfile03.out")
+for (ignore in 1:20) {
+  picked <- sample(nrow(HN), 1500)
+  bankData <- HN[picked, seq(1, ncol(HN), 2)]
+  testSet <- HN[picked, seq(2, 6, 2)]
+  bs <- bankStat(testSet = testSet, bankMatrix = bankData)
+  assign(paste("bs", ignore, sep='.'), bs, .GlobalEnv)
+}
+Rprof()
+summaryRprof("myProfile03.out")
+```
+
+# Appendix
+```{r si}
+sessionInfo()
+```

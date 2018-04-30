@@ -1,8 +1,10 @@
 import("methods")
 
 importFrom("stats", "approxfun", "density", "integrate", "loess",
-           "pnorm", "predict", "rnorm", "sd")
-importFrom("graphics", "plot", "hist", "points", "legend")
+           "pnorm", "predict", "rnorm", "sd",
+           "dbeta", "nlm", "optimize")
+importFrom("graphics", "plot", "hist", "points", "legend",
+           "lines", "mtext", "par")
 
 importFrom("oompaBase", "matrixMean", "matrixVar")
 
@@ -10,3 +12,7 @@ export("bankStat", "createBank")
 export("pairedStat")
 
 exportMethods("plot", "hist", "[", "dim")
+
+exportClass("MixOf3Beta")
+export("fitMix3", "computeFDR", "computeCutoff")
+exportMethods("image")

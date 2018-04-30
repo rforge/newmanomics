@@ -76,17 +76,17 @@ Tumor <- GSE6631[, c(2,4)]
 
 ### input two separate matrices
 ps1 <- pairedStat(Normal, Tumor)
-summary(ps1$nu.statistics)
-summary(ps1$p.values)
+summary(ps1@nu.statistics)
+summary(ps1@p.values)
 
 ### input one combined matrix and a pairing vector
 ps2 <- pairedStat(GSE6631, pairing=c(-1, 1, -2, 2))
-summary(ps2$nu.statistics)
-summary(ps2$p.values)
+summary(ps2@nu.statistics)
+summary(ps2@p.values)
 
 ### input a list of matrix-pairs
 ps3 <- pairedStat(list(One = GSE6631[, 1:2],
                        Two = GSE6631[, 3:4]))
-summary(ps3$nu.statistics)
-summary(ps3$p.values)
+summary(ps3@nu.statistics)
+summary(ps3@p.values)
 }

@@ -39,16 +39,15 @@ Type 'q()' to quit R.
 > toc <- proc.time()
 > all(toc - tic < 10, na.rm=TRUE) # takes less than 7s on my PC
 [1] TRUE
-> attributes(ps) # should be two
-$names
-[1] "nu.statistics" "p.values"     
-
-> dim(ps$nu.statistics)
+> slotNames(ps) # should be five
+[1] "nu.statistics" "p.values"      "pairedMean"    "difference"   
+[5] "smoothSD"     
+> dim(ps@nu.statistics)
 [1] 20531     1
-> dim(ps$p.values)
+> dim(ps@p.values)
 [1] 20531     1
 > 
-> summary(ps$nu.statistics)
+> summary(ps@nu.statistics)
  TCGA.38.4625.11A.01R.1758.07
  Min.   : 0.0000             
  1st Qu.: 0.3357             
@@ -56,7 +55,7 @@ $names
  Mean   : 1.2988             
  3rd Qu.: 1.9462             
  Max.   :18.4447             
-> summary(ps$p.values)
+> summary(ps@p.values)
        V1        
  Min.   :0.0000  
  1st Qu.:0.2723  
@@ -65,7 +64,7 @@ $names
  3rd Qu.:0.8499  
  Max.   :1.0000  
 > 
-> head(ps$nu.statistics)
+> head(ps@nu.statistics)
             TCGA.38.4625.11A.01R.1758.07
 ?|100130426                    0.0000000
 ?|100133144                    0.3084685
@@ -73,7 +72,7 @@ $names
 ?|10357                        0.5257639
 ?|10431                        1.6200054
 ?|136542                       0.0000000
-> head(ps$p.values)
+> head(ps@p.values)
          [,1]
 [1,] 0.999999
 [2,] 0.862121
@@ -83,7 +82,7 @@ $names
 [6,] 0.999999
 > 
 > ps2 <- pairedStat(list(lung))
-> summary(ps2$nu.statistics)
+> summary(ps2@nu.statistics)
        V1         
  Min.   : 0.0000  
  1st Qu.: 0.3357  
@@ -91,7 +90,7 @@ $names
  Mean   : 1.2988  
  3rd Qu.: 1.9462  
  Max.   :18.4447  
-> summary(ps2$p.values)
+> summary(ps2@p.values)
        V1        
  Min.   :0.0000  
  1st Qu.:0.2725  
@@ -100,7 +99,7 @@ $names
  3rd Qu.:0.8493  
  Max.   :1.0000  
 > 
-> summary(ps$nu.statistics - ps2$nu.statistics)
+> summary(ps@nu.statistics - ps2@nu.statistics)
  TCGA.38.4625.11A.01R.1758.07
  Min.   :0                   
  1st Qu.:0                   
@@ -108,7 +107,7 @@ $names
  Mean   :0                   
  3rd Qu.:0                   
  Max.   :0                   
-> summary(pdiff <- ps$p.values - ps2$p.values)
+> summary(pdiff <- ps@p.values - ps2@p.values)
        V1            
  Min.   :-8.830e-04  
  1st Qu.:-2.000e-04  
@@ -117,9 +116,12 @@ $names
  3rd Qu.: 4.080e-04  
  Max.   : 9.590e-04  
 > 
-> plot(ps$nu.statistics, pdiff)
+> plot(ps@nu.statistics, pdiff)
 > abline(h=0)
+> 
+> plot(ps)
+> hist(ps)
 > 
 > proc.time()
    user  system elapsed 
-  14.35    0.26   14.64 
+  14.22    0.26   14.49 

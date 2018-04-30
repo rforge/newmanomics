@@ -1,3 +1,60 @@
+setClass("NewmanPaired",
+         slots = c(
+           nu.statistics = "matrix",
+           p.values = "matrix",
+           pairedMean = "matrix",
+           difference = "matrix",
+           smoothSD = "matrix")
+)
+
+validNewmanPair <- function(object) {
+  all((dim(object@nu.statistics) == dim(object@p.values))
+      & (dim(object@nu.statistics) == dim(object@pairedMean))
+      & (dim(object@nu.statistics) == dim(object@difference))
+      & (dim(object@nu.statistics) == dim(object@smoothSD)))
+}
+setValidity("NewmanPaired", validNewmanPair)
+
+setMethod("[", signature = "NewmanPaired", function(x, i, j, ..., drop=FALSE) {
+  new("NewmanPaired",
+      nu.statistics = x@nu.statistics[i,j, drop=FALSE],
+      p.values = x@p.values[i,j, drop=FALSE],
+      pairedMean = x@pairedMean[i,j, drop=FALSE],
+      difference = x@difference[i,j, drop=FALSE],
+      smoothSD = x@smoothSD[i,j, drop=FALSE])
+})
+
+setMethod("dim", signature = "NewmanPaired", function(x) {
+  dim(x@nu.statistics)
+})
+
+setMethod("plot", signature = c("NewmanPaired", "missing"), function(x, y, high=0.99, low=0.01, ...) {
+  if (dim(x)[2] > 1) {
+    warning("Multiple pairs in 'x'; only plotting the first one.")
+    x <- x[,1]
+  }
+  bigp <- x@p.values > 0.99
+  smallp <- x@p.values < 0.01
+  plot(x@pairedMean, x@difference, xlab="Mean log expression", ylab="Difference in log expression")
+  points(x@pairedMean[bigp], x@difference[bigp], col='blue', pch=16)
+  points(x@pairedMean[smallp], x@difference[smallp], col='red', pch=16)
+  points(x@pairedMean, x@smoothSD, col='orange')
+  points(x@pairedMean, -x@smoothSD, col='orange')
+  legend("topleft",
+         c(paste("P <", round(low, 3)),
+           paste("P >", round(high, 3)),
+           "Smoothed SD"),
+         col=c("red", "blue", "orange"), pch=16)
+  invisible(x)
+})
+
+setMethod("hist", signature = "NewmanPaired", function(x, breaks=101, xlab="P-value", ...) {
+  if (dim(x)[2] > 1) {
+    warning("Multiple pairs in 'x'; only showing the first one.")
+    x <- x[,1]
+  }
+  hist(x@p.values, breaks=breaks, xlab=xlab, ...)
+})
 
 pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
 
@@ -24,20 +81,21 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
   ## Or just let the first computation throw its own error?
 
   ## Matrix computation of mean of two things
-  temp.means <- (baseData + perturbedData) / 2
+  pairedMean <- (baseData + perturbedData) / 2
   ## Similar computation for SD of two things.
-  temp.sd <- abs(baseData - perturbedData) / sqrt(2)
+  pooledSD <- abs(baseData - perturbedData) / sqrt(2)
   ## For each column, perform loess fit
   n <- dim(baseData)[1]
   s <- dim(baseData)[2]
-  MatsdEst <- matrix(NA, n, s) # set aside storage
+  smoothSD <- matrix(NA, n, s) # set aside storage
   for (i in 1:s) {
-    l.mod <- loess(temp.sd[ ,i] ~ temp.means[ ,i])
-    MatsdEst[ ,i] <- predict(l.mod)
+    l.mod <- loess(pooledSD[ ,i] ~ pairedMean[ ,i])
+    smoothSD[ ,i] <- predict(l.mod)
   }
 
   ## compute the matrix of nu-statistics
-  matNu <- abs(baseData - perturbedData) / MatsdEst
+  ## KRC: Why is there an absolute value?
+  matNu <- abs(baseData - perturbedData) / smoothSD
 
   ## empirical p-values via simulation
   m <- mean(matNu)
@@ -46,7 +104,12 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
   pValsPaired <- nu2PValPaired(matNu, as.vector(randNu))
 
   ## KRC: should we make this a proper object, or just leave it a list?
-  return(list(nu.statistics=matNu, p.values=pValsPaired))
+  new("NewmanPaired",
+      nu.statistics = matNu,
+      p.values = pValsPaired,
+      pairedMean = pairedMean,
+      difference = perturbedData - baseData,
+      smoothSD = smoothSD)
 }
 
 ### Generating 1 million Nu values based on the overall mean and std deviation

@@ -117,12 +117,23 @@ dMix3 <- function(object, x) {
   psi[1]*L*x^(L-1) + psi[2]*M*(1-x)^(M-1) + psi[3]
 }
 
+# the cumulative probability function for the fitted distribution
+# should be
+#          alpha * x^L  +  beta * (1 - (1 - x)^M)  +  gamma * x
+pMix3 <- function(object, x) {
+  psi <- object@psi
+  L <- object@mle[1]
+  M <- object@mle[2]
+  psi[1]*x^(L) + psi[2]*(1 - (1-x)^M) + psi[3]*x
+}
+
 # compute FDR given cutoff on nominal p-value
+# note consistency with above description of CDF
 computeFDR <- function(object, x) {
   mle <- object@mle
   psi <- object@psi
-  A <- psi[2] * (1 - x)^mle[2]
-  B <- psi[1] * x^mle[1] + psi[3]*x
+  A <- psi[2] * (1 - (1 - x)^mle[2])
+  B <- psi[1] * x^mle[1] + psi[3] * x
   B/(A+B)
 }
 

@@ -28,7 +28,8 @@ setMethod("dim", signature = "NewmanPaired", function(x) {
   dim(x@nu.statistics)
 })
 
-setMethod("plot", signature = c("NewmanPaired", "missing"), function(x, y, high=0.99, low=0.01, ...) {
+setMethod("plot", signature = c("NewmanPaired", "missing"),
+          function(x, y, high=0.99, low=0.01, colset=c("red", "blue", "orange"), ...) {
   if (dim(x)[2] > 1) {
     warning("Multiple pairs in 'x'; only plotting the first one.")
     x <- x[,1]
@@ -36,15 +37,15 @@ setMethod("plot", signature = c("NewmanPaired", "missing"), function(x, y, high=
   bigp <- x@p.values > 0.99
   smallp <- x@p.values < 0.01
   plot(x@pairedMean, x@difference, xlab="Mean log expression", ylab="Difference in log expression")
-  points(x@pairedMean[bigp], x@difference[bigp], col='blue', pch=16)
-  points(x@pairedMean[smallp], x@difference[smallp], col='red', pch=16)
-  points(x@pairedMean, x@smoothSD, col='orange')
-  points(x@pairedMean, -x@smoothSD, col='orange')
+  points(x@pairedMean[smallp], x@difference[smallp], col=colset[1], pch=16)
+  points(x@pairedMean[bigp], x@difference[bigp], col=colset[2], pch=16)
+  points(x@pairedMean, x@smoothSD, col=colset[3])
+  points(x@pairedMean, -x@smoothSD, col=colset[3])
   legend("topleft",
          c(paste("P <", round(low, 3)),
            paste("P >", round(high, 3)),
            "Smoothed SD"),
-         col=c("red", "blue", "orange"), pch=16)
+         col=colset, pch=16)
   invisible(x)
 })
 

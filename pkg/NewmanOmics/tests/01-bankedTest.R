@@ -11,7 +11,8 @@ bankMatrix <- HN[picked, seq(1, ncol(HN), 2)]
 testSet <- HN[picked, seq(2, 6, 2)]
 
 bs <- bankStat(testSet = testSet, bankMatrix = bankMatrix)
-
+class(bs) # now a list. Should we create a class?
+names(bs) # two entries
 summary(bs$nu.statistics)
 summary(bs$p.values)
 

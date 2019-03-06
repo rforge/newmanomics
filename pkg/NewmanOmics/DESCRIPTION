@@ -2,8 +2,8 @@ Package: NewmanOmics
 Type: Package
 LazyData: true
 Title: Extending the Newman Studentized Range Statistic to Transcriptomics
-Version: 0.9.2
-Date: 2018-06-12
+Version: 0.9.3
+Date: 2018-11-06
 Author: Zachary Abrams, Greg Gershkowitz, Anoushka Joglekar, Kevin R. Coombes
 Maintainer: Kevin R. Coombes <krc@silicovore.com>
 Description: Extends the classical Newman studentized range statistic

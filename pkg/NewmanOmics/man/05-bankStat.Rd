@@ -22,17 +22,11 @@ createBank(bankMatrix)
 A list containing two matrices: the \code{nu.statistics} and the \code{p.values}.
 }
 \examples{
-\dontrun{
-# Bank Object consisting of row means, estimate of std deviation and background distribution
-input1 <- read.csv(file = "filepath.csv",row.names = 1) 
-# Dataset to be tested against the bank
-input2 <- read.csv(file = "filepath.csv", row.names = 1)
-# Dataset that comprises the bank
-input3 <- read.csv(file = "filepath.csv", row.names = 1)
-
-bankObj <- data.matrix(input1)
-testSet <- data.matrix(input2)
-bankMatrix <- data.matrix(input3)
-
-bankStat(bankObj, testSet, bankMatrix)
-}}
+data(GSE6631)
+HN <- as.matrix(log2(1 + GSE6631))
+bankMatrix <- HN[,seq(1, ncol(HN), 2)] # odd columns are normal
+testSet <- HN[, seq(2, 6, 2)]   # evn columns are tumor
+bs <- bankStat(testSet = testSet, bankMatrix = bankMatrix)
+summary(bs$nu.statistics)
+summary(bs$p.values)
+}

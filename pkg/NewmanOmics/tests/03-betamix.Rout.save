@@ -1,6 +1,6 @@
 
-R version 3.5.1 (2018-07-02) -- "Feather Spray"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -18,18 +18,8 @@ Type 'q()' to quit R.
 > library(NewmanOmics)
 > 
 > ### pairedStat
-> csvfile <- system.file("extdata", "LungNormalTumorPair.csv",
-+                        package="NewmanOmics")
-> lung <- read.csv(csvfile, row.names=1)
-> summary(lung)
- TCGA.38.4625.11A.01R.1758.07 TCGA.38.4625.01A.01R.1758.07
- Min.   :     0.0             Min.   :     0.0            
- 1st Qu.:     5.5             1st Qu.:     7.2            
- Median :   177.6             Median :   210.9            
- Mean   :  1216.7             Mean   :  1152.7            
- 3rd Qu.:   773.4             3rd Qu.:   850.5            
- Max.   :517227.5             Max.   :839878.9            
-> lung <- as.matrix(log2(1 + lung))
+> data(LungPair)
+> lung <- as.matrix(log2(1 + LungPair))
 > 
 > set.seed(12345)
 > normal <- lung[, 1, drop=FALSE]
@@ -5024,4 +5014,4 @@ In nlm(logLikelihood, mle, q = datavec, z = Z, stepmax = 10000,  :
 > 
 > proc.time()
    user  system elapsed 
-  29.67    0.24   29.99 
+  29.59    0.54   30.15 

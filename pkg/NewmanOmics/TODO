@@ -1,15 +1,6 @@
-1. Figure out what (if anything) from the `inst/DontLose` directory
-  should really be kept.
+1. Add code to do the pilot studies.
 
-2. Add code to do the pilot studies.
-
-3. Make real examples for the man pages. Decide if these use real or
+2. Make real examples for the man pages. Decide if these use real or
    simulated data.
 
-4. Write a vignette.
-
-5: Clean up the inst/extdata folder to remove stuff that isn't
-absolutely necessary.
-
-6. Decide what to include in the "data" directory. Can possibly move
-anything large to the "oompaData" package.
+3. Write a vignette.

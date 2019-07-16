@@ -4,3 +4,7 @@ set.seed(941846)
 pick <- sample(nrow(GSE6631), 2000)
 GSE6631 <- GSE6631[pick,]
 save(GSE6631, file=file.path("..", "..", "data", "GSE6631.rda"))
+
+LungPair <- as.matrix(read.csv("LungNormalTumorPair.csv", row.names=1))
+save(LungPair,
+     file = file.path("..", "pkg", "NewmanOmics", "data", "LungPair.rda"))

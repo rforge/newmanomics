@@ -2,7 +2,7 @@ Package: NewmanOmics
 Type: Package
 LazyData: true
 Title: Extending the Newman Studentized Range Statistic to Transcriptomics
-Version: 0.9.6
+Version: 0.9.7
 Date: 2019-07-16
 Author: Zachary Abrams, Greg Gershkowitz, Anoushka Joglekar, Kevin R. Coombes
 Maintainer: Kevin R. Coombes <krc@silicovore.com>
@@ -12,4 +12,6 @@ Description: Extends the classical Newman studentized range statistic
 License: Apache License (== 2.0)
 Depends: R (>= 3.2.0)
 Imports: methods, stats, graphics, oompaBase
+VignetteBuilder: knitr
+Suggests: knitr, rmarkdown
 URL: http://oompa.r-forge.r-project.org/

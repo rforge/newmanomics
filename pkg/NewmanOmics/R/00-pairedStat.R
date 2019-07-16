@@ -73,8 +73,8 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
     neg <- which(pairing < 0)
     neg <- neg[order(pairing[order(neg)])]  
     x <- baseData
-    baseData <- x[,neg]
-    perturbedData <- x[,pos]
+    baseData <- x[,neg,drop=FALSE] # 'drop' in case there is only one pair
+    perturbedData <- x[,pos, drop=FALSE]
     rm(x, pos, neg)
   }
   

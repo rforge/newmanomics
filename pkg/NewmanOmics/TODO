@@ -1,6 +1,3 @@
 1. Add code to do the pilot studies.
 
-2. Make real examples for the man pages. Decide if these use real or
-   simulated data.
-
-3. Write a vignette.
+2. Write a vignette.

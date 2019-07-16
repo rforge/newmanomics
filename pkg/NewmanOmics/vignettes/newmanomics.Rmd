@@ -1,0 +1,104 @@
+---
+title: "NewmanOmics: Tools for Personalized Transcriptomics"
+author: "Kevin R. Coombes"
+data: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{NewmanOmics}
+  %\VignetteKeywords{NewmanOmics,Personalized Transcriptomics,Paired Test,Banked Test}
+  %\VignetteDepends{NewmanOmics}
+  %\VignettePackage{NewmanOmics}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r setup, include=FALSE, results="hide"}
+knitr::opts_chunk$set(echo = TRUE, fig.width=7,fig.height=5,echo=TRUE)
+```
+
+In this vignette, we describe how to use the NewmanOmics Paired and
+Banked tests to analyze gene expression data from a single sample.
+
+# Getting Started
+
+As usual, we start by loading the package:
+
+```{r libs}
+library(NewmanOmics)
+```
+
+The package contains paired tumor and normal samples from patients with
+head and neck cancer. these came from a study that was submitted to the
+Gene Expression Omnibus.
+```{r GSE6631}
+data(GSE6631)
+dim(GSE6631)
+GSE6631[1:5, 1:4]
+```
+As we can see, this consists of (normalized) Affymetrix microarray data.
+The odd numbered columns are derived from normal mucosa, and the even numbered
+columns are derived from paired tumor samples.
+
+Before proceeding, we are going to log-transform the data.
+```{r HN, fig.cap="Box plot of log-transformed data."}
+HN <- log2(1 + GSE6631)
+boxplot(HN, col=c("forestgreen", "dodgerblue"))
+```
+The figure suggests that the the data have been reasonably normalized, and that
+it is unlikely to be overwhelmed by artifacts.
+
+# Paired Statistic
+To illustrate the Newman Paired test, we are going to use only one sample.
+```{r HN1}
+HN1 <- HN[, 1:2]
+result1 <- pairedStat(HN1, pairing = c(-1,1))
+summary(result1@nu.statistics)
+summary(result1@p.values)
+```
+We can create a histogram of the per-gene (empirical) p-values
+```{r fig.cap="Histogram of empoirical p-values."}
+hist(result1)
+```
+We can also produce an "M-versus-A" plot of the data.
+```{r fig.cap="Bland-Altman plot."}
+plot(result1)
+```
+
+## Alternate Inputs
+The <tt>pairedStat</tt> function has flexible inputs, allowing you to store the data 
+in various ways. Here we run the algorithm for three pairs, with an explicit pairing vector.
+```{r}
+result2 <- pairedStat(HN[, 1:6], pairing=c(-1, 1, -2, 2, -3, 3))
+summary(result2@nu.statistics)
+summary(result2@p.values)
+```
+
+We can also input the same data as a pair of matrices.
+```{r HN3}
+normals <- HN[, c(1,3,5)]
+tumors <- HN[, c(2,4,6)]
+result3 <- pairedStat(normals, tumors)
+summary(result3@nu.statistics)
+summary(result3@p.values)
+```
+
+Or we can input the same data as a list of paired samples.
+```{r HN4}
+listOfPairs <- list(HN[,1:2], HN[,3:4], HN[,5:6])
+result4 <- pairedStat(listOfPairs)
+summary(result4@nu.statistics)
+summary(result4@p.values)
+```
+
+# Banked Statistic
+A completely different approach to personalized transcriptomics is to compare
+individual samples to a "bank" of known normals.
+
+```{r makeBank}
+normals <- HN[, seq(1, ncol(HN), 2)] # odds are normal
+tumors <- HN[, seq(2, ncol(HN), 2)] # evens are tumor
+bank <- createBank(normals)
+result5 <- bankStat(bank, tumors[,1,drop=FALSE])
+summary(result5$nu.statistics)
+summary(result5$p.values)
+hist(result5$p.values, breaks=101)
+```

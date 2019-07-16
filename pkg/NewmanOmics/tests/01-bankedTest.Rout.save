@@ -1,6 +1,6 @@
 
-R version 3.5.1 (2018-07-02) -- "Feather Spray"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -17,9 +17,8 @@ Type 'q()' to quit R.
 
 > library(NewmanOmics)
 > 
-> csvfile <- system.file("extdata", "GSE6631_Head&NeckSq.csv",
-+                        package="NewmanOmics")
-> HN <- as.matrix(read.csv(csvfile, row.names=1))
+> data(GSE6631)
+> HN <- as.matrix(log2(1 + GSE6631))
 > HN <- log2((1/19)*median(HN) + HN)
 > 
 > set.seed(12345)
@@ -34,37 +33,37 @@ Type 'q()' to quit R.
 > names(bs) # two entries
 [1] "nu.statistics" "p.values"     
 > summary(bs$nu.statistics)
-    Cancer.1          Cancer.2          Cancer.3       
- Min.   :-7.7013   Min.   :-6.3847   Min.   :-6.60423  
- 1st Qu.:-0.5759   1st Qu.:-0.5890   1st Qu.:-0.63814  
- Median : 0.3333   Median : 0.3041   Median :-0.11273  
- Mean   : 0.1719   Mean   : 0.2159   Mean   : 0.02416  
- 3rd Qu.: 0.9990   3rd Qu.: 1.0504   3rd Qu.: 0.51641  
- Max.   :13.0513   Max.   :10.6148   Max.   :11.94726  
+    Cancer.1            Cancer.2           Cancer.3         
+ Min.   :-12.52279   Min.   :-10.7697   Min.   :-11.534449  
+ 1st Qu.: -0.52482   1st Qu.: -0.5616   1st Qu.: -0.576519  
+ Median :  0.29960   Median :  0.2910   Median : -0.077493  
+ Mean   :  0.08296   Mean   :  0.1038   Mean   : -0.005766  
+ 3rd Qu.:  0.99903   3rd Qu.:  0.9687   3rd Qu.:  0.500584  
+ Max.   :  5.87033   Max.   :  8.5824   Max.   :  8.547029  
 > summary(bs$p.values)
        V1               V2               V3        
  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.3140   1st Qu.:0.3101   1st Qu.:0.2958  
- Median :0.6081   Median :0.5987   Median :0.4610  
- Mean   :0.5512   Mean   :0.5537   Mean   :0.4858  
- 3rd Qu.:0.7967   3rd Qu.:0.8086   3rd Qu.:0.6654  
+ 1st Qu.:0.3324   1st Qu.:0.3214   1st Qu.:0.3170  
+ Median :0.5977   Median :0.5949   Median :0.4745  
+ Mean   :0.5507   Mean   :0.5476   Mean   :0.4923  
+ 3rd Qu.:0.7953   3rd Qu.:0.7881   3rd Qu.:0.6603  
  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
 > 
 > bankObj <- createBank(bankMatrix)
 > summary(bankObj$rowStats)
-      mean              SD              sdEst       
- Min.   : 3.988   Min.   :0.04772   Min.   :0.1062  
- 1st Qu.: 5.273   1st Qu.:0.18920   1st Qu.:0.2814  
- Median : 6.573   Median :0.26679   Median :0.3600  
- Mean   : 6.682   Mean   :0.33845   Mean   :0.3378  
- 3rd Qu.: 7.768   3rd Qu.:0.41539   3rd Qu.:0.3909  
- Max.   :13.369   Max.   :2.13707   Max.   :0.6071  
+      mean             SD              sdEst        
+ Min.   :1.954   Min.   :0.01412   Min.   :0.04581  
+ 1st Qu.:2.470   1st Qu.:0.04578   1st Qu.:0.06954  
+ Median :2.778   Median :0.06198   Median :0.07628  
+ Mean   :2.745   Mean   :0.07515   Mean   :0.07518  
+ 3rd Qu.:3.016   3rd Qu.:0.08876   3rd Qu.:0.08209  
+ Max.   :3.785   Max.   :0.50759   Max.   :0.08356  
 > dim(bankObj$background)
 [1] 2000   22
 > mean(bankObj$background)
-[1] 0.004650279
+[1] 1.195464e-05
 > range(bankObj$background)
-[1] -8.092244 14.276889
+[1] -14.91926  14.34338
 > 
 > bs2 <- bankStat(bankObj, testSet)
 [1] "P vals done"
@@ -73,4 +72,4 @@ Type 'q()' to quit R.
 > 
 > proc.time()
    user  system elapsed 
-   4.52    0.23    4.68 
+   3.20    0.31    3.43 

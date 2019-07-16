@@ -10,15 +10,15 @@
 }
 \usage{
 fitMix3(datavec, forever=100, epsilon=0.001, print.level=0)
-computeFDR(object, x)
+computeFDR(object, alpha)
 computeCutoff(object, fdr)
 }
 \details{
-  We have observed empirically that the set of p-value sobtained when
+  We have observed empirically that the set of p-values obtained when
   computing the Newman paired test statistic often has peaks both at zero
   (representing genes of interest) and at one (representing "boring"
   genes that change much less than expected). We attribute the latter
-  phenomenonh to the fact that we use locally smoothed instead of
+  phenomenon to the fact that we use locally smoothed instead of
   gene-by-gene estimates of the standard deviation; genes whose SD is
   increased by the smoothing process contribute to the boring peak near
   one.
@@ -51,10 +51,11 @@ computeCutoff(object, fdr)
   the mixture model.}
 \item{epsilon}{A real number; change in the log likelihood that should
   be used to terminate the model-fitting loop.}
-\item{print.level}{An integer; how much detail should \code{link{nlm}}
+\item{print.level}{An integer; how much detail should \code{\link{nlm}}
   print while fitting the model.}
 \item{object}{An object of the \code{\link{MixOf3Beta}} class.}
-\item{x}{A real number between 0 and 1; the cu}
+\item{alpha}{A real number between 0 and 1; the cutoff on the nominal
+  p-value where the FDR should be computed.}
 \item{fdr}{A real number beteen 0 and 1; the targeted FDR value.}
 }
 \value{

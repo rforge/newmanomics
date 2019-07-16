@@ -11,8 +11,6 @@
   Represents the reusults of computing the Newman Paired test statistic
   on one or more paired samples.
 }
-\details{
-}
 \section{Creating Objects}{
   In practice, users will use the \code{\link{pairedStat}} function to
   construct an object of the \code{NewmanPaired} class. Hand
@@ -47,6 +45,9 @@
   }
 }
 \references{
+  Abrams ZB, Joglekar A, Gershkowitz GR, Sinicropi-yao S, Asiaee A,
+  Carbone DP, Coombes KR. Personalized Transcriptomics: Selecting Drugs
+  Based on Gene Expression Profiles. Preprint.
 }
 \author{
   Kevin R. Coombes \email{krc@silicovore.com}

@@ -1,41 +1,15 @@
-0. DONE: KRC: 2017-10-25 1:00 PM
-Change the output of pairedTest so it produces both nu statistics
-and p-values. Should use the same format as t.test for the output.
-
-1. DONE: KRC: 2017-10-25 1:20 PM
-Build test code for running the pairedTest function.
-
-2. DONE: KRC: 2017-10-25 1:30 PM
-Get rid of the nested for loops by vectorizing the code.
-
-3. DONE: KRC: 2018-04-27 1:00 PM
-The `pairedStat code is still slow (althoough it passes the
-regression test by not changing the test output). We need to profile
-it to figure out why it is so slow. I suspect that it's in the random
-simulation code. Note that after removing all nested loops, takes
-about 90 clock-seconds on my laptop to run the test script.
-
-4. DONE: KRC: 2017-19-25 1:40 PM
-Split "paired" and "bank" into separate source files.
-
-5. Figure out what (if anything) from the `inst/DontLose` directory
+1. Figure out what (if anything) from the `inst/DontLose` directory
   should really be kept.
 
-6. Add code to do the pilot studies.
+2. Add code to do the pilot studies.
 
-7. DONE: KRC; 2018-04-27 1:00 PM
-Separate building the "bank" from evaluating samples against the bank.
-
-8. Make real examples for the man pages. Decide if these use real or
+3. Make real examples for the man pages. Decide if these use real or
    simulated data.
 
-9. Write a vignette.
+4. Write a vignette.
 
-10. DONE: KRC: 2018=04-27 1:00 PM
-Fix the output of pairedStat so it preserves row (gene) names.
+5: Clean up the inst/extdata folder to remove stuff that isn't
+absolutely necessary.
 
-11: Clean up the inst/extdata folder to remove stuff that isn't
-abso0lutely necessary.
-
-12. Decide what to includen in the "data" directory. Can possibly move
-anything large to the "oompaDaqta" package.
+6. Decide what to include in the "data" directory. Can possibly move
+anything large to the "oompaData" package.

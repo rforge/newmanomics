@@ -129,11 +129,11 @@ pMix3 <- function(object, x) {
 
 # compute FDR given cutoff on nominal p-value
 # note consistency with above description of CDF
-computeFDR <- function(object, x) {
+computeFDR <- function(object, alpha) {
   mle <- object@mle
   psi <- object@psi
-  A <- psi[2] * (1 - (1 - x)^mle[2])
-  B <- psi[1] * x^mle[1] + psi[3] * x
+  A <- psi[2] * (1 - (1 - alpha)^mle[2])
+  B <- psi[1] * alpha^mle[1] + psi[3] * alpha
   B/(A+B)
 }
 

@@ -1,8 +1,7 @@
 library(NewmanOmics)
 
-csvfile <- system.file("extdata", "GSE6631_Head&NeckSq.csv",
-                       package="NewmanOmics")
-HN <- as.matrix(read.csv(csvfile, row.names=1))
+data(GSE6631)
+HN <- as.matrix(log2(1 + GSE6631))
 HN <- log2((1/19)*median(HN) + HN)
 
 set.seed(12345)

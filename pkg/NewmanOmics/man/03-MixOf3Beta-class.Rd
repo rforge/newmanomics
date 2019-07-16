@@ -51,6 +51,9 @@
   }
 }
 \references{
+  Abrams ZB, Joglekar A, Gershkowitz GR, Sinicropi-yao S, Asiaee A,
+  Carbone DP, Coombes KR. Personalized Transcriptomics: Selecting Drugs
+  Based on Gene Expression Profiles. Preprint.
 }
 \author{
   Kevin R. Coombes \email{krc@silicovore.com}

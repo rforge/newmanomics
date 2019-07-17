@@ -65,12 +65,27 @@ setMethod("plot", signature = c("NewmanPaired", "missing"),
   invisible(x)
 })
 
-setMethod("hist", signature = "NewmanPaired", function(x, breaks=101, xlab="P-value", ...) {
-  if (dim(x)[2] > 1) {
-    warning("Multiple pairs in 'x'; only showing the first one.")
-    x <- x[,1]
+setMethod("hist", signature = "NewmanPaired",
+          function(x, breaks=101, which=NULL, ask=NULL, xlab="P-value", ...) {
+  M <- dim(x)[2]
+  if (is.null(which)) {
+    which <- 1:M
   }
-  hist(x@p.values, breaks=breaks, xlab=xlab, ...)
+  if (any(which < 1) || any(which > M)) {
+    stop("'which' must be between", 1, "and", M, "\n")
+  }
+  if (is.null(ask)) {
+    ask <- prod(par("mfcol")) < length(which) && dev.interactive()
+  }
+  if (ask) {
+    oask <- devAskNewPage(TRUE)
+    on.exit(devAskNewPage(oask))
+  }
+  for (W in which) {
+    X <- x[,W]
+    hist(X@p.values, breaks=breaks, xlab=xlab,
+         main=colnames(X@p.values), ...)
+  }
 })
 
 pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){

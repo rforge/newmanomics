@@ -46,7 +46,7 @@ Type 'q()' to quit R.
 [1] 20531     1
 > 
 > summary(ps@nu.statistics)
- TCGA.38.4625.11A.01R.1758.07
+ TCGA.38.4625.01A.01R.1758.07
  Min.   : 0.0000             
  1st Qu.: 0.3357             
  Median : 1.0023             
@@ -54,16 +54,16 @@ Type 'q()' to quit R.
  3rd Qu.: 1.9462             
  Max.   :18.4447             
 > summary(ps@p.values)
-       V1        
- Min.   :0.0000  
- 1st Qu.:0.2723  
- Median :0.5709  
- Mean   :0.5564  
- 3rd Qu.:0.8499  
- Max.   :1.0000  
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   :0.0000              
+ 1st Qu.:0.2723              
+ Median :0.5709              
+ Mean   :0.5564              
+ 3rd Qu.:0.8499              
+ Max.   :1.0000              
 > 
 > head(ps@nu.statistics)
-            TCGA.38.4625.11A.01R.1758.07
+            TCGA.38.4625.01A.01R.1758.07
 ?|100130426                    0.0000000
 ?|100133144                    0.3084685
 ?|100134869                    0.7578389
@@ -71,13 +71,13 @@ Type 'q()' to quit R.
 ?|10431                        1.6200054
 ?|136542                       0.0000000
 > head(ps@p.values)
-         [,1]
-[1,] 0.999999
-[2,] 0.862121
-[3,] 0.668867
-[4,] 0.766898
-[5,] 0.360506
-[6,] 0.999999
+     TCGA.38.4625.01A.01R.1758.07
+[1,]                     0.999999
+[2,]                     0.862121
+[3,]                     0.668867
+[4,]                     0.766898
+[5,]                     0.360506
+[6,]                     0.999999
 > 
 > ps2 <- pairedStat(list(lung))
 > summary(ps2@nu.statistics)
@@ -98,7 +98,7 @@ Type 'q()' to quit R.
  Max.   :1.0000  
 > 
 > summary(ps@nu.statistics - ps2@nu.statistics)
- TCGA.38.4625.11A.01R.1758.07
+ TCGA.38.4625.01A.01R.1758.07
  Min.   :0                   
  1st Qu.:0                   
  Median :0                   
@@ -106,13 +106,13 @@ Type 'q()' to quit R.
  3rd Qu.:0                   
  Max.   :0                   
 > summary(pdiff <- ps@p.values - ps2@p.values)
-       V1            
- Min.   :-8.830e-04  
- 1st Qu.:-2.000e-04  
- Median : 2.200e-05  
- Mean   : 9.801e-05  
- 3rd Qu.: 4.080e-04  
- Max.   : 9.590e-04  
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   :-8.830e-04          
+ 1st Qu.:-2.000e-04          
+ Median : 2.200e-05          
+ Mean   : 9.801e-05          
+ 3rd Qu.: 4.080e-04          
+ Max.   : 9.590e-04          
 > 
 > plot(ps@nu.statistics, pdiff)
 > abline(h=0)
@@ -122,4 +122,4 @@ Type 'q()' to quit R.
 > 
 > proc.time()
    user  system elapsed 
-  13.50    0.65   14.25 
+  13.60    0.53   14.15 

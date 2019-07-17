@@ -41,7 +41,6 @@ setMethod("plot", signature = c("NewmanPaired", "missing"),
   if (is.null(ask)) {
     ask <- prod(par("mfcol")) < length(which) && dev.interactive()
   }
-  cat("which:", which, "; ask:", ask, "\n")
   if (ask) {
     oask <- devAskNewPage(TRUE)
     on.exit(devAskNewPage(oask))
@@ -102,6 +101,7 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
   pairedMean <- (baseData + perturbedData) / 2
   ## Similar computation for SD of two things.
   pooledSD <- abs(baseData - perturbedData) / sqrt(2)
+  colnames(pairedMean) <- colnames(pooledSD) <- colnames(perturbedData)
   ## For each column, perform loess fit
   n <- dim(baseData)[1]
   s <- dim(baseData)[2]
@@ -110,18 +110,20 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
     l.mod <- loess(pooledSD[ ,i] ~ pairedMean[ ,i])
     smoothSD[ ,i] <- predict(l.mod)
   }
-
+  colnames(smoothSD) <- colnames(pairedMean)
+  
   ## compute the matrix of nu-statistics
   ## KRC: Why is there an absolute value?
   matNu <- abs(baseData - perturbedData) / smoothSD
+  colnames(matNu) <- colnames(pairedMean)
 
   ## empirical p-values via simulation
   m <- mean(matNu)
   sd <- sd(matNu)
   randNu <- randNuGen(m, sd)
   pValsPaired <- nu2PValPaired(matNu, as.vector(randNu))
+  colnames(pValsPaired) <- colnames(pairedMean)
 
-  ## KRC: should we make this a proper object, or just leave it a list?
   new("NewmanPaired",
       nu.statistics = matNu,
       p.values = pValsPaired,

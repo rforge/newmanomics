@@ -93,7 +93,9 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
   if (is.list(baseData)) {
     x <- baseData
     baseData <- do.call(cbind, lapply(x, function(entry) {entry[,1]}))
+    colnames(baseData) <- sapply(x, function(A) colnames(A)[1])
     perturbedData <- do.call(cbind, lapply(x, function(entry) {entry[,2]}))
+    colnames(perturbedData) <- sapply(x, function(A) colnames(A)[2])
     rm(x)
   } else if (is.null(perturbedData)) {
     if (is.null(pairing)) {

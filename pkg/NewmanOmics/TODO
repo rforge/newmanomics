@@ -1,3 +1,11 @@
 1. Add code to do the pilot studies.
 
-2. Write a vignette.
+2. Create an S4 class for BanedStats objects, and add appropraite grneric functions.
+
+3. Extend the vignette to better illustrate the banked statistic.
+   Think about splitting it into two separate vignettes.
+
+4. Write a "summary" method for PairedStats objects.
+
+5. Maybe create a class (with reasonable methods) for the "bank"
+   object instead of just using a list.

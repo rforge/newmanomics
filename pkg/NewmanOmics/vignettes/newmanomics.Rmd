@@ -72,6 +72,10 @@ summary(result2@nu.statistics)
 summary(result2@p.values)
 ```
 
+```{r fig.cap="Bland-ALtman plots."}
+plot(result2)
+```
+
 We can also input the same data as a pair of matrices.
 ```{r HN3}
 normals <- HN[, c(1,3,5)]

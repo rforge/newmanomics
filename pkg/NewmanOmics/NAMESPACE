@@ -5,6 +5,7 @@ importFrom("stats", "approxfun", "density", "integrate", "loess",
            "dbeta", "nlm", "optimize")
 importFrom("graphics", "plot", "hist", "points", "legend",
            "lines", "mtext", "par")
+importFrom("grDevices", "dev.interactive", "devAskNewPage")
 
 importFrom("oompaBase", "matrixMean", "matrixVar")
 

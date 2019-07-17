@@ -39,8 +39,8 @@
   \describe{
     \item{x[i,j]}{Select a subset of features or sample pairs.}
     \item{dim(x)}{The dimension, N by S, of the object.}
-    \item{plot(x, y, high=0.99, low=0.01, ...)}{Plot the results of the
-      analysis of one sample pair.}
+    \item{plot(x, y, which = NULL, ask = NULL, high = 0.99, low = 0.01,
+      ...)}{Plot the results of the analysis of one sample pair.}
     \item{hist(x, breaks=101, xlab="P-value", ...)}{Plot a histogram of the p-values for one sample-pair.}
   }
 }

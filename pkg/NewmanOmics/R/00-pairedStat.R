@@ -29,23 +29,40 @@ setMethod("dim", signature = "NewmanPaired", function(x) {
 })
 
 setMethod("plot", signature = c("NewmanPaired", "missing"),
-          function(x, y, high=0.99, low=0.01, colset=c("red", "blue", "orange"), ...) {
-  if (dim(x)[2] > 1) {
-    warning("Multiple pairs in 'x'; only plotting the first one.")
-    x <- x[,1]
+          function(x, y, which = NULL, ask = NULL,
+                   high=0.99, low=0.01, colset=c("red", "blue", "orange"), ...) {
+  M <- dim(x)[2]
+  if (is.null(which)) {
+    which <- 1:M
   }
-  bigp <- x@p.values > 0.99
-  smallp <- x@p.values < 0.01
-  plot(x@pairedMean, x@difference, xlab="Mean log expression", ylab="Difference in log expression")
-  points(x@pairedMean[smallp], x@difference[smallp], col=colset[1], pch=16)
-  points(x@pairedMean[bigp], x@difference[bigp], col=colset[2], pch=16)
-  points(x@pairedMean, x@smoothSD, col=colset[3])
-  points(x@pairedMean, -x@smoothSD, col=colset[3])
-  legend("topleft",
-         c(paste("P <", round(low, 3)),
-           paste("P >", round(high, 3)),
-           "Smoothed SD"),
-         col=colset, pch=16)
+  if (any(which < 1) || any(which > M)) {
+    stop("'which' must be between", 1, "and", M, "\n")
+  }
+  if (is.null(ask)) {
+    ask <- prod(par("mfcol")) < length(which) && dev.interactive()
+  }
+  cat("which:", which, "; ask:", ask, "\n")
+  if (ask) {
+    oask <- devAskNewPage(TRUE)
+    on.exit(devAskNewPage(oask))
+  }
+  for (W in which) {
+    X <- x[,W]
+    bigp <- X@p.values > 0.99
+    smallp <- X@p.values < 0.01
+    plot(X@pairedMean, X@difference,
+         main=colnames(X@pairedMean),
+         xlab="Mean log expression", ylab="Difference in log expression")
+    points(X@pairedMean[smallp], X@difference[smallp], col=colset[1], pch=16)
+    points(X@pairedMean[bigp], X@difference[bigp], col=colset[2], pch=16)
+    points(X@pairedMean, X@smoothSD, col=colset[3])
+    points(X@pairedMean, -X@smoothSD, col=colset[3])
+    legend("topleft",
+           c(paste("P <", round(low, 3)),
+             paste("P >", round(high, 3)),
+             "Smoothed SD"),
+           col=colset, pch=16)
+  }
   invisible(x)
 })
 
@@ -71,7 +88,7 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
     pos <- which(pairing > 0)
     pos <- pos[order(pairing[pos])]
     neg <- which(pairing < 0)
-    neg <- neg[order(pairing[order(neg)])]  
+    neg <- neg[order(abs(pairing[neg]))]  
     x <- baseData
     baseData <- x[,neg,drop=FALSE] # 'drop' in case there is only one pair
     perturbedData <- x[,pos, drop=FALSE]

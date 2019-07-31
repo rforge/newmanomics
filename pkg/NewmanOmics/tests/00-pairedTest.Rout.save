@@ -81,21 +81,21 @@ Type 'q()' to quit R.
 > 
 > ps2 <- pairedStat(list(lung))
 > summary(ps2@nu.statistics)
-       V1         
- Min.   : 0.0000  
- 1st Qu.: 0.3357  
- Median : 1.0023  
- Mean   : 1.2988  
- 3rd Qu.: 1.9462  
- Max.   :18.4447  
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   : 0.0000             
+ 1st Qu.: 0.3357             
+ Median : 1.0023             
+ Mean   : 1.2988             
+ 3rd Qu.: 1.9462             
+ Max.   :18.4447             
 > summary(ps2@p.values)
-       V1        
- Min.   :0.0000  
- 1st Qu.:0.2725  
- Median :0.5706  
- Mean   :0.5563  
- 3rd Qu.:0.8493  
- Max.   :1.0000  
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   :0.0000              
+ 1st Qu.:0.2725              
+ Median :0.5706              
+ Mean   :0.5563              
+ 3rd Qu.:0.8493              
+ Max.   :1.0000              
 > 
 > summary(ps@nu.statistics - ps2@nu.statistics)
  TCGA.38.4625.01A.01R.1758.07
@@ -122,4 +122,4 @@ Type 'q()' to quit R.
 > 
 > proc.time()
    user  system elapsed 
-  13.60    0.53   14.15 
+   9.01    0.06    9.07 

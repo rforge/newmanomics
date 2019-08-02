@@ -17,11 +17,11 @@ setValidity("MixOf3Beta", validBetaMix)
 setMethod("plot", signature = c("MixOf3Beta", "missing"), function(x, y, ...) {
   who <- apply(x@Z, 1, function(w) {sample(1:3, 1, prob=w)})
   opar <- par(mfrow=c(3,1))
+  on.exit(par(opar))
   hist(x@input[who==1], breaks=57, main="Right", xlab="P")
   hist(x@input[who==2], breaks=57, main="Left", xlab="P")
   hist(x@input[who==3], breaks=57, main="Uniform", xlab="P")
-  par(opar)
-
+  invisible(x)
 })
 
 setMethod("hist", signature = "MixOf3Beta", function(x, lcol="red", breaks=101, ...) {

@@ -65,8 +65,6 @@ bankStat <- function(bankObj, testSet, bankMatrix){
 
   matPBanked <- pValuesBanked(matrix = matNuBank, Background = Back_dist_iter, n, s)
 
-  print("P vals done")
-
   return(list(nu.statistics = matNuBank, p.values = matPBanked))
 
 }
@@ -136,7 +134,7 @@ empiricalP <- function(matrix,background,n,s){
   return(empirMatP)
 }
 
-fdrCorrection <- function(matrix,n,s){
+fdrCorrection <- function(matrix, n, s, verbose = FALSE){
 
   ## Benjamini Hochberg method employed. Could also use built in p.adjust(p, "BH")
   ## Percent correction only factors in during analysis, b/c (rank/total)*percentageFDR only gives the adjusted cutoff
@@ -164,7 +162,7 @@ fdrCorrection <- function(matrix,n,s){
 
   for (i in 1:num){
     adjustedP[i] <- min(adjustedP[i-1],(vs[i]*num)/vRank[i])
-    if(i%%(num/10) == 0)print((i/num)*100)
+    if(verbose & i %% (num/10) == 0) print((i/num)*100)
   }
 
   fdrP <- matrix(NA,n,s)

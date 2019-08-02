@@ -27,7 +27,6 @@ Type 'q()' to quit R.
 > testSet <- HN[picked, seq(2, 6, 2)]
 > 
 > bs <- bankStat(testSet = testSet, bankMatrix = bankMatrix)
-[1] "P vals done"
 > class(bs) # now a list. Should we create a class?
 [1] "list"
 > names(bs) # two entries
@@ -66,10 +65,9 @@ Type 'q()' to quit R.
 [1] -14.91926  14.34338
 > 
 > bs2 <- bankStat(bankObj, testSet)
-[1] "P vals done"
 > all(bs$nu.statistics == bs2$nu.statistics)
 [1] TRUE
 > 
 > proc.time()
    user  system elapsed 
-   3.20    0.31    3.43 
+   2.15    0.09    2.21 

@@ -13,7 +13,7 @@ summary(ps@p.values)
 fm <- fitMix3(as.vector(ps@p.values), print.level = 0)
 ### reduce displayed digits to avoid differences in NLM
 ### on different platforms
-formatC(fm@mle, digits=5, format="e")
+formatC(fm@mle, digits=3, format="e")
 round(fm@psi, 5)
 
 plot(fm)

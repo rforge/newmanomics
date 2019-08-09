@@ -40,8 +40,8 @@ In nlm(logLikelihood, mle, q = datavec, z = Z, stepmax = 10000,  :
   NA/Inf replaced by maximum positive value
 > ### reduce displayed digits to avoid differences in NLM
 > ### on different platforms
-> formatC(fm@mle, digits=5, format="e")
-[1] "1.00001e+06" "1.08306e+02"
+> formatC(fm@mle, digits=3, format="e")
+[1] "1.000e+06" "1.083e+02"
 > round(fm@psi, 5)
 [1] 0.11061 0.01761 0.87178
 > 
@@ -50,4 +50,4 @@ In nlm(logLikelihood, mle, q = datavec, z = Z, stepmax = 10000,  :
 > 
 > proc.time()
    user  system elapsed 
-  18.54    0.17   18.70 
+  29.90    0.45   30.34 

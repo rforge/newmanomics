@@ -8,10 +8,7 @@ set.seed(12345)
 normal <- lung[, 1, drop=FALSE]
 tumor  <- lung[, 2, drop=FALSE]
 
-tic <- proc.time()
 ps <- pairedStat(normal, tumor)
-toc <- proc.time()
-all(toc - tic < 10, na.rm=TRUE) # takes less than 7s on my PC
 slotNames(ps) # should be five
 dim(ps@nu.statistics)
 dim(ps@p.values)
